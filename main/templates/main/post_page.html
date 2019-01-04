@@ -1,0 +1,348 @@
+﻿{% extends "base.html" %}
+
+{% load wagtailcore_tags %}
+{% load wagtailembeds_tags %}
+{% load wagtailimages_tags %}
+{% load wagtailroutablepage_tags %}
+
+{% load humanize %}
+
+{% load markdownmath_tags %}
+{% load mainapp_tags %}
+
+{% block content %}
+
+    {% render_post post categories tags False %}
+
+    {% if previous_post or next_post %}
+        <div class="row justify-content-between">
+            <div class="col-md-5">
+                {% if previous_post %}
+                    <p class="font-italic">Previous post:</p>
+                    <h3><a href="{% post_date_url previous_post root_page %}" class="text-dark">{{ previous_post.title }}</a></h3>
+                {% endif %}
+            </div>
+            <div class="col-md-5 text-right">
+                {% if next_post %}
+                    <p class="font-italic">Next post:</p>
+                    <h3><a href="{% post_date_url next_post root_page %}" class="text-dark">{{ next_post.title }}</a></h3>
+                {% endif %}
+            </div>
+        </div>
+
+        <hr />
+    {% endif %}
+
+    {% if post.show_comments %}
+        {% render_comments post root_page %}
+    {% endif %}
+
+{% endblock %}  
+
+{% block sidebar %}
+    <div class="overflow-max-height">
+        <div class="row no-gutters pl-1">
+            <div class="col-md-12">
+                <p><h6><i>By <a href="{% routablepageurl root_page 'posts_by_owner' post.owner.username %}" class="text-dark">
+                    {% if post.owner.first_name or post.owner.last_name %}
+                        {{ post.owner.first_name }} {{ post.owner.last_name }}
+                    {% else %}
+                        {{ post.owner.username }}
+                    {% endif %}
+                </a></i></h6></p>
+            </div>
+        </div>
+        <div class="row no-gutters pl-1">
+            <div class="col-md-12">
+                <p class="font-italic">First came: {{ post.first_published_at.date|naturalday:'d E, Y' }} {{ post.first_published_at.time|naturaltime }}</p>
+            </div>
+        </div>
+        {% if post.last_published_at > post.first_published_at %}
+            <div class="row no-gutters pl-1">
+                <p class="font-italic">Last updated: {{ post.last_published_at.date|naturalday:'d E, Y' }} {{ post.last_published_at.time|naturaltime }}</p>
+            </div>
+        {% endif %}
+
+        {% if post.show_sidebar %}
+        <div class="row no-gutters pl-1 mt-4 mb-4">
+            <div class="col-md-12">
+                <nav>
+                    <div class="nav nav-tabs" id="post-nav" role="tablist">
+                        <a class="nav-item nav-link active" 
+                            id="contents-tab" 
+                            data-toggle="tab" 
+                            href="#contents" 
+                            role="tab" 
+                            aria-controls="contents" 
+                            aria-selected="false">
+                            Contents
+                        </a>
+                        <a class="nav-item nav-link" 
+                            id="figures-tab" 
+                            data-toggle="tab" 
+                            href="#figures" 
+                            role="tab" 
+                            aria-controls="figures" 
+                            aria-selected="false">
+                            Figures
+                        </a>
+                        <a class="nav-item nav-link" 
+                            id="equations-tab" 
+                            data-toggle="tab" 
+                            href="#equations" 
+                            role="tab" 
+                            aria-controls="equations" 
+                            aria-selected="true">
+                            Equations
+                        </a>
+                    </div>
+                </nav>
+                <div class="tab-content" id="post-nav-content">
+                    <div class="tab-pane fade show active" id="contents" role="tabpanel" aria-labelledby="contents-tab">
+                        <div class="text-truncate">
+                            <nav class="navbar navbar-light">
+                                <nav id="nav-contents" class="nav nav-pills flex-column">
+
+                                </nav>
+                            </nav>
+                        </div>
+                    </div>
+
+                    <div class="tab-pane fade" id="figures" role="tabpanel" aria-labelledby="figures-tab">
+                        {% set_context_var 'figure_idx' 1 %}
+                        {% with fig_idx=0 column_list=0 %}
+                            {% for block in post.body %}
+
+                                {% if block.block_type == 'image' %}
+                                    <div class="figure-container pt-4">
+                                        {% get_context_var 'figure_idx' as fig_idx %}
+                                        {% render_figure block fig_idx post.generate_figure_numbers True %}
+                                        <!-- Button trigger show image in modal -->
+                                        <button type="button" 
+                                            class="btn btn-info figure-button" 
+                                            data-toggle="modal" 
+                                            data-target="#modal-figure-{{ fig_idx }}">
+                                            Enlarge
+                                        </button>
+                                        <hr />
+                                    </div>
+                                    {# figure_idx must be incremented for modal id, otherwise modal will not pop up #}
+                                    {% increment_context_var 'figure_idx' %}
+
+                                {% endif %}
+
+                                {# columns block must be looped through as it can contain images #}
+                                {% if block.block_type == 'columns' %}
+                                    {# loop through columns #}
+                                    {% create_list block.value.left block.value.right as column_list %}
+                                    {% for column in column_list %}
+                                        {# loop through column blocks #}
+                                        {% for col_block in column %}
+                                            {% if col_block.block_type == 'image' %}
+                                                <div class="figure-container pt-4">
+                                                    {% get_context_var 'figure_idx' as fig_idx %}
+                                                    {% render_figure col_block fig_idx post.generate_figure_numbers True %}
+                                                    <!-- Button trigger show image in modal -->
+                                                    <button type="button" 
+                                                        class="btn btn-info figure-button" 
+                                                        data-toggle="modal" 
+                                                        data-target="#modal-figure-{{ fig_idx }}">
+                                                        Enlarge
+                                                    </button>
+                                                    <hr />
+                                                </div>
+                                                {# fig_idx must be incremented for modal id, otherwise modal will not pop up #}
+                                                {% increment_context_var 'figure_idx' %}
+                                            {% endif %}
+                                        {% endfor %}    
+                                    {% endfor %}
+
+                                {% endif %}
+
+                            {% endfor %}
+                        {% endwith %}
+                    </div>
+
+                    <div class="tab-pane fade" id="equations" role="tabpanel" aria-labelledby="equations-tab">
+                        {% with eq_idx=1 %}
+                            {% for block in post.body %}
+                                {% if block.block_type == 'equation' %}
+                                    <div class="equation-container pt-4 text-truncate">
+                                        {{ block.value.equation }}
+                                        <p class="figure-caption">
+                                            Equation {{ eq_idx }}.
+                                        </p>
+                                        <!-- Button trigger show image in modal -->
+                                        <button type="button" 
+                                            class="btn btn-info equation-button" 
+                                            data-toggle="modal" 
+                                            data-target="#modal-equation-{{ eq_idx }}">
+                                            View
+                                        </button>
+                                        <hr />
+                                    </div>
+                                    {# eq_idx must be incremented for modal id, otherwise modal will not pop up #}
+                                    {% increment_idx eq_idx as eq_idx %}
+                                {% endif %}
+                            {% endfor %}
+                        {% endwith %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {# End of post.show_sidebat of #}
+        {% endif %}
+    </div>
+{% endblock %}
+
+{% if post.show_sidebar %}
+{% block modal %}
+    {% set_context_var 'figure_idx' 1 %}
+    {% with fig_idx=0 column_list=0 %}
+        {% for block in page.body %}
+
+            {% if block.block_type == 'image' %}
+                {% get_context_var 'figure_idx' as fig_idx %}
+                <!-- Modal for figure -->
+                <div class="modal fade" 
+                    id="modal-figure-{{ fig_idx }}" 
+                    tabindex="-1" role="dialog" 
+                    aria-labelledby="label-figure-{{ fig_idx }}" 
+                    aria-hidden="true">
+                    <div class="modal-dialog modal-responsive" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="label-figure-{{ fig_idx }}">Figure 
+                                    {% if post.generate_figure_numbers %}
+                                        {{ fig_idx }}.
+                                    {% endif %}
+                                </h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                {% render_figure block fig_idx post.generate_figure_numbers %}
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% increment_context_var 'figure_idx' %}
+
+            {% endif %}
+
+            {% if block.block_type == 'columns' %}
+                {# loop through columns #}
+                {% create_list block.value.left block.value.right as column_list %}
+                {% for column in column_list %}
+                    {# loop through column blocks #}
+                    {% for col_block in column %}
+                        {% if col_block.block_type == 'image' %}
+                            {% get_context_var 'figure_idx' as fig_idx %}
+                            <!-- Modal for figure -->
+                            <div class="modal fade" 
+                                id="modal-figure-{{ fig_idx }}" 
+                                tabindex="-1" role="dialog" 
+                                aria-labelledby="label-figure-{{ fig_idx }}" 
+                                aria-hidden="true">
+                                <div class="modal-dialog modal-responsive" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="label-figure-{{ fig_idx }}">Figure 
+                                                {% if post.generate_figure_numbers %}
+                                                    {{ fig_idx }}.
+                                                {% endif %}
+                                            </h5>
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                        <div class="modal-body">
+                                            {% render_figure col_block fig_idx post.generate_figure_numbers %}
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {% increment_context_var 'figure_idx' %}
+                        {% endif %}
+                    {% endfor %}
+                {% endfor %}
+
+            {% endif %}
+
+        {% endfor %}
+
+    {% endwith %}
+
+    {% with eq_idx=1 %}
+        {% for block in page.body %}
+            {% if block.block_type == 'equation' %}
+                <!-- Modal for figure -->
+                <div class="modal fade" 
+                    id="modal-equation-{{ eq_idx }}" 
+                    tabindex="-1" role="dialog" 
+                    aria-labelledby="label-equation-{{ eq_idx }}" 
+                    aria-hidden="true">
+                    <div class="modal-dialog modal-responsive" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="label-equation-{{ eq_idx }}">Equation 
+                                    {% if post.generate_equation_numbers %}
+                                        {{ eq_idx }}.
+                                    {% endif %}
+                                </h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="text-justify">
+                                    {{ block.value.equation }}
+                                </div>
+                                {% if block.value.caption %}
+                                    <div class="text-justify">
+                                        {{ block.value.caption|markdown|safe }}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% increment_idx eq_idx as eq_idx %}
+            {% endif %}
+        {% endfor %}
+    {% endwith %}
+{% endblock %}
+{# end of post.show_sidebar if #}
+{% endif %}
+
+
+{% block extra_js %}
+    <script type="text/javascript">
+        // generate table of contents
+        $(document).ready(function() {
+            generateContents();
+        });
+        
+        // set max-width the modals based on image width 
+        $(window).on('load', function(){
+            // Set the max-width of the modal slighlty bigger than the 
+            // width of the image it is supposed to show. Thus the image is shown
+            // in its original size and in the middle of the modal.
+            $('.modal-dialog').each(function(i, modal){
+                img_width = $(modal).find('img').attr('width');                
+                $(modal).css('max-width', parseInt(img_width) + 50);
+            })
+        });
+        
+    </script>
+{% endblock %}

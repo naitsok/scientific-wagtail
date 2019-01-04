@@ -1,0 +1,29 @@
+.subtitle .halloeditor, .subtitle input, .subtitle textarea {
+    font-size: 1.8em !important;
+    font-family: Roboto Slab,Georgia,serif
+}
+
+.list-title {
+    font-weight: bold;
+    font-size: 1.2em;
+}
+
+.captcha-p {
+    left: 1%;
+    width: 10%;
+    top: 30% !important;
+    height: 100%;
+}
+
+/* classes to color text for e.g. in markdown */
+.text-green {
+    color: rgb(40, 167, 69);
+}
+
+.text-red {
+    color: rgb(220, 53, 69);
+}
+
+.text-blue {
+    color: rgb(0, 123, 255);
+}

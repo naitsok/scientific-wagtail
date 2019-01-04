@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+
+{% load wagtailcore_tags %}
+{% load wagtailimages_tags %}
+{% load widget_tweaks %}
+{% load mainapp_tags %}
+
+{% block content %}
+    {% image page.header_image original class='img-fluid' %}
+
+    <h1 class="pt-4">{{ page.title }}</h1>
+
+    {{ page.body|richtext }}
+
+    <form action="{% pageurl page %}" method="POST">
+        {% csrf_token %}
+        {% if form.errors %}
+            <div class="alert alert-danger" role="alert">
+                <ul class="mb-0">
+                    {% if form.non_field_errors %}
+                    {% for error in form.non_field_errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                    {% endif %}
+                    {% for field in form %}
+                        {% if field.errors %}
+                        {% for error in field.errors %}
+                            <li>{{ error }}</li>
+                        {% endfor %}
+                        {% endif %}
+                    {% endfor %}
+                </ul>
+            </div>
+        {% endif %}
+
+        {% for field in form.visible_fields %}
+            <div class="form-group row">
+                <div class="col-md-2">
+                    {{ field|add_label_class:'col-md-2 col-form-label font-weight-bold' }}
+                </div>
+                <div class="col-md-10">
+                    {{ field|add_class:'form-control' }}
+                </div>
+            </div>
+        {% endfor %}
+        <div class="form-group row">
+            <div class="col-md-10 offset-md-2">
+                <button type="submit" class="btn btn-secondary">Submit</button>
+            </div>
+        </div>
+    </form>
+{% endblock %}
+
+{% block sidebar %}
+    <div class="overflow-max-height">
+        {% if page.show_search %}
+        <div class="row no-gutters pl-1">
+            {% include 'main/components/sidebar_search.html' %}
+        </div>
+        <hr />
+        {% endif %}
+        {% if page.show_tag_cloud %}
+        <div class="row no-gutters pl-1">
+            {% render_tag_cloud page %}
+        </div>
+        <hr />
+        {% endif %}
+        {% if page.show_categories %}
+        <div class="row no-gutters pl-1">
+            {% render_blog_categories page %}
+        </div>
+        {% endif %}
+    </div>
+{% endblock %}

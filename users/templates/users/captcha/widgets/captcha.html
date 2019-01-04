@@ -1,0 +1,13 @@
+{% load i18n %}
+
+{% spaceless %}
+{# dirty hack to put the captcha image on place. What is better way? #}
+<p class="help captcha-p">
+    {% if audio %}
+        <a title="{% trans "Play CAPTCHA as audio file" %}" href="{{ audio }}">
+    {% endif %}
+    <img src="{{ image }}" alt="captcha" class="captcha" />
+    {% if audio %}</a>{% endif %}
+</p>
+{% endspaceless %}
+{% include "django/forms/widgets/multiwidget.html" %}

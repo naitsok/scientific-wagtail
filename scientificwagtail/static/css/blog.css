@@ -1,0 +1,111 @@
+.overflow-max-height {
+    height: calc(100vh - 7rem);
+    overflow-y: auto;
+}
+
+.modal-responsive {
+    display: table; 
+    width: auto;
+    table-layout: fixed;
+    min-width: 40rem;
+    /* max-width: calc(100vw - 100px); */
+}
+
+.modal-responsive img {
+    height: auto;
+    width: auto;
+    /* max-height: calc(100vh - 200px); */
+}
+
+.figure-container {
+    position: relative;
+    width: 100%;
+}
+
+.figure-button {
+    /* Button to be placed in the middle of image */
+    position: absolute;
+    opacity: 0;
+    top: 45%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    -ms-transform: translate(-50%, -50%);
+}
+
+.figure-container:hover .figure-button{
+    opacity: 1;
+}
+
+.equation-container {
+    position: relative;
+    width: 100%;
+}
+
+.equation-button {
+    /* Button to be placed in the middle of image */
+    position: absolute;
+    opacity: 0;
+    top: 45%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    -ms-transform: translate(-50%, -50%);
+}
+
+.equation-container:hover .equation-button{
+    opacity: 1;
+}
+
+/* Responsive images (from Wagtail documentation) - not working that well */
+.rich-text img {
+    max-width: 100%;
+    height: auto;
+}
+
+.btn.btn-no-padding {
+    padding-left: 0rem;
+    padding-right: 0rem;
+}
+
+.btn.font-bold {
+    font-weight: bold;
+}
+
+.text-underline {
+    text-decoration: underline;
+}
+
+.wider-dropdown-menu {
+    /* changes the width for the search field in navbar dropdown */
+    width: 18rem;
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+}
+
+.doc-link {
+    display: none;
+}
+
+.col-padding {
+    padding-top: 5rem;
+}
+
+.sidebar-z-index {
+    z-index: 120;
+}
+
+.archive-button {
+    margin-top: 0.5rem;
+}
+
+/* classes to color text for e.g. in markdown */
+.text-green {
+    color: rgb(40, 167, 69);
+}
+
+.text-red {
+    color: rgb(220, 53, 69);
+}
+
+.text-blue {
+    color: rgb(0, 123, 255);
+}

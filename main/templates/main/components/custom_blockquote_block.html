@@ -1,0 +1,9 @@
+<blockquote class="blockquote">
+    <p class="mb-0"><i class="fas fa-quote-left"></i></p>
+    <p class="mb-0 pl-5">{{ self.quote }}</p>
+    {% if self.author %}
+        <footer class="blockquote-footer pl-5">
+            {{ self.author }} {% if self.source %}in <cite title="Source Title">{{ self.source }}</cite>{% endif %}
+        </footer>
+    {% endif %}
+</blockquote>

@@ -1,0 +1,16 @@
+{% load wagtailimages_tags %}
+{% load markdownmath_tags %}
+{% load mainapp_tags %}
+
+<figure class="figure">
+    {% image figure original class='img-fluid' %}
+    {% if caption %}
+        <figcaption class="figure-caption">
+            {% if truncate_caption %}
+                {{ caption|truncatechars:30|markdown|safe }}
+            {% else %}
+                {{ caption|markdown|safe }}
+            {% endif %}
+        </figcaption>
+    {% endif %}
+</figure>

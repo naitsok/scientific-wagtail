@@ -1,0 +1,23 @@
+
+.markdownx {
+    display: flex;
+}
+
+.markdownx-textarea {
+    flex: 0 0 50%;
+    padding-right: 1em;
+}
+
+.markdownx-preview {
+    flex: 1;
+    padding-left: 1em;
+    padding-top: 1em;
+    padding-bottom: 1em;
+}
+
+
+.markdownx-textarea textarea {
+    font-family: monospace;
+    height: 100%;
+}
+

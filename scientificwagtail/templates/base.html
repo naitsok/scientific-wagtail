@@ -1,0 +1,204 @@
+{% load static %}
+{% load wagtailuserbar %}
+{% load wagtailimages_tags %}
+{% load wagtailroutablepage_tags %}
+{% load menu_tags %}
+{% load mainapp_tags %}
+
+
+<!doctype html>
+<html lang="en">
+    <head>
+        {# Required Boostrap meta tags #}
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+        {# Bootstrap CSS #}
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+
+        {# Font awesome icons #}
+        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
+        
+        {% image root_page.navbar_image max-40x40 as img %}
+        <link rel="icon" href="{{ img.url }}">
+        
+        <title>
+            {% block title %}
+                {% if self.seo_title %}{{ self.seo_title }}{% else %}{{ self.title }}{% endif %}
+            {% endblock %}
+            {% block title_suffix %}
+                {% with self.get_site.site_name as site_name %}
+                    {% if site_name %}- {{ site_name }}{% endif %}
+                {% endwith %}
+            {% endblock %}
+        </title>
+        <meta name="description" content="" />
+
+        {# Responsive Bootstrap meta tag #}
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+        {# Global stylesheets #}
+        <link rel="stylesheet" type="text/css" href="{% static 'css/blog.css' %}">
+        <link rel="stylesheet" href="{% static 'css/codehilite_default.css' %}">
+
+        {% block extra_css %}
+            {# Override this in templates to add extra stylesheets #}
+        {% endblock %}
+    </head>
+
+    <body class="{% block body_class %}{% endblock %}">
+        {% wagtailuserbar %}
+
+        <div class="container">
+
+            <header class="navbar navbar-expand-md navbar-light bg-light sticky-top">
+                <a class="navbar-brand" href="/">
+                    {% image root_page.navbar_image max-40x40 %}
+                    {% if root_page.title_in_navbar %}{{ root_page.title }}{% endif %}
+                </a>
+                {% if root_page.slogan %}<span class="navbar-text"><i>{{ root_page.slogan }}</i></span>{% endif %}
+
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav ml-auto">
+                        {% main_menu template="main/menus/main_menu.html" %}
+                            
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle"
+                                href="#"
+                                id="menu-search" 
+                                data-toggle="dropdown" 
+                                aria-haspopup="true" 
+                                aria-expanded="false"
+                                role="button">
+                                <i class="fas fa-search"></i>
+                            </a>
+                            <div class="dropdown-menu wider-dropdown-menu dropdown-menu-right" aria-labelledby="menu-search">
+                                <form role="search" method="get" class="form-inline" action="{% routablepageurl root_page 'post_search' %}" method="get">
+                                    {% csrf_token %}
+                                    <div class="input-group" style="width: 100%;">
+                                        <input type="text" class="form-control search-query" name="q" placeholder="Search&hellip;" title="Search for:" />
+                                        <span class="input-group-btn">
+                                            <button type="submit" class="btn btn-default" name="submit" id="searchsubmit" value="Search">
+                                                <span class="fas fa-search"></span>
+                                            </button>
+                                        </span>
+                                    </div>
+                                </form>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </header>
+                
+            <div class="row" role="main">
+                <main class="col-md-8 col-padding">
+                    {% block content %}{% endblock %}
+                </main>
+                <div class="col-md-4 align-self-start sticky-top col-padding sidebar-z-index">
+                    {% block sidebar %}{% endblock %}
+                </div>
+            </div>
+            
+            <footer class="row mt-2 py-3 bg-light">
+                <div class="col-md-4">
+                    {% if recent_posts %}
+                        <h5>Resent posts.</h5>
+                        <ul>
+                            {% for p in recent_posts %}
+                                <li><a href="{% post_date_url p root_page %}" class="text-dark">{{ p.title }}</a></li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                </div>
+                <div class="col-md-4">
+                    <dl class="row">
+                        <dt class="col-md-1"><i class="far fa-copyright"></i></dt>
+                        <dd class="col-md-11">{{ root_page.title }}.<br /><small>Contents are licensed under <a target="_blank" href="https://creativecommons.org/licenses/by-sa/3.0/">cc by-sa 3.0</a>.</small></dd>
+
+                        <dt class="col-md-1"><i class="fab fa-github"></i></dt>
+                        <dd class="col-md-11">scientific-wagtail</dd>
+
+                        <dt class="col-md-1"><img src="{% static 'icons/wagtail-logo.svg' %}" width="20" height="20" /></dt>
+                        <dd class="col-md-11">Powered by <a target="_blank" href="https://wagtail.io">Wagtail</a></dd>
+                    </dl>
+                    {% block footer %}{% endblock %}
+                </div>
+                <div class="col-md-4">
+                    {% if archive_displayed %}
+                        <h5>Archives.</h5>
+                        <ul class="mb-0">
+                            {% for date in archive_displayed %}
+                                <li><a href="{% routablepageurl root_page 'posts_by_date' date|date:'Y' date|date:'b' %}" class="text-dark">{{ date|date:'E, Y' }}</a></li>
+                            {% endfor %}
+                        </ul>
+                        {% if archive_hidden %}
+                            <ul class="collapse mb-0" id="collapseArchive">
+                                {% for date in archive_hidden %}
+                                    <li><a href="{% routablepageurl root_page 'posts_by_date' date|date:'Y' date|date:'b' %}" class="text-dark">{{ date|date:'E, Y' }}</a></li>
+                                {% endfor %}
+                            </ul>
+                        <p class="archive-button">
+                            <a class="btn btn-light" data-toggle="collapse" href="#collapseArchive" role="button" aria-expanded="false" aria-controls="collapseArchive">
+                                More archives
+                            </a>
+                        </p>
+                        {% endif %}  
+                    {% endif %}
+                </div>
+            </footer>
+
+        </div>
+
+        
+
+        {# Block outside any positioned blocks to add modals, so they pop up correctly #}
+        {% block modal %}{% endblock %}
+    
+        {# Global javascript #}
+        <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js" integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut" crossorigin="anonymous"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous"></script>
+        <script type="text/x-mathjax-config">
+            MathJax.Hub.Config({
+                // skipStartupTypeset:true,
+                extensions: ["tex2jax.js", "MathZoom.js"],
+                jax: ["input/TeX", "output/HTML-CSS", "output/SVG"],
+                tex2jax: {
+                    inlineMath: [['$','$']],
+                    displayMath: [['$$','$$']] ,
+                    processEscapes: true
+                },
+                "HTML-CSS": { 
+                    availableFonts: ["TeX"] ,
+                    linebreaks:  { automatic: true }
+                },
+                menuSettings: { zoom: "Click" }
+            });
+        </script>  
+        <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js' async></script>
+        <script type="text/javascript" id="cookieinfo"
+            src="//cookieinfoscript.com/js/cookieinfo.min.js"
+            data-message="We use cookies to enhance your experience. Cookies are needed for MathJax to render equations, for Disqus to display comments and to keep your session. By continuing to visit this site you agree to use of cookies.">
+        </script>
+        <script type="text/javascript" src="{% static 'js/most-visible.min.js' %}"></script>
+        <script type="text/javascript" src="{% static 'js/blog.js' %}"></script>
+
+        {# the following script is needed at any page, since documents allowd for every page #}
+        <script type="text/javascript">
+            $(document).ready(function() { 
+                applyTableClass();
+                replaceTextWithDocumentLinks(); 
+            });
+        </script>
+
+        {% block extra_js %}
+            {# Override this in templates to add extra javascript #}
+        {% endblock %}
+    
+    </body>
+</html>
+

@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+
+{% load wagtailcore_tags %}
+{% load wagtailimages_tags %}
+{% load wagtailroutablepage_tags %}
+
+{% load el_pagination_tags %}
+
+{% load mainapp_tags %}
+
+{% block content %}
+
+    {# el-pagination page number and pages variable #}
+    {% show_current_number as current_page_number %}
+
+    {% if pinned_posts.count and current_page_number <= 1 %}
+    
+        <h3>
+            Pinned posts: 
+            <small class="text-muted">Always here.</small>
+        </h3>
+
+        {% for post in pinned_posts %}
+            {% render_post post post.categories.all post.tags.all True %}
+            <br />
+        {% endfor %}
+
+        <br />
+
+        <h3>
+            Recent posts: 
+            <small class="text-muted">Newcomers.</small>
+        </h3>
+
+    {% endif %}
+
+    {% if search_header %}
+        <h3>
+            {{ search_header }} 
+            <small class="text-muted">{{ search_term }}</small>
+        </h3>
+    {% endif %}
+
+    {% paginate 3 posts %}
+    {% for post in posts %}
+        {% render_post post post.blog_categories.all post.tags.all True %}
+        <br />
+    {% endfor %}
+
+    <br />
+
+    <nav aria-label="HomePage navigation"></nav>
+        <ul class="pagination justify-content-center">
+            {% show_pages %}
+        </ul>
+    </nav>
+
+{% endblock %}
+
+{% block sidebar %}
+    <div class="overflow-max-height">
+        <div class="row no-gutters pl-1">
+            {% include 'main/components/sidebar_search.html' %}
+        </div>
+        <hr />
+        <div class="row no-gutters pl-1">
+            {% render_tag_cloud page %}
+        </div>
+        <hr />
+        <div class="row no-gutters pl-1">
+            {% render_blog_categories page %}
+        </div>
+    </div>
+{% endblock %}
+
+{% block extra_js %}
+    <script type="text/javascript">
+        $(document).ready(function(){
+            highlightCategories();
+            highlightTags();
+        });
+
+        $(window).bind('scroll', function(){
+            highlightCategories();
+            highlightTags();
+        });
+    </script>
+{% endblock %}

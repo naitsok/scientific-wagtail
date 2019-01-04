@@ -1,0 +1,89 @@
+{% extends "wagtailadmin/login.html" %}
+
+{% load static i18n %}
+
+
+{# Have to change the whole furniture block because there is not other way to change the error messages for e.g captcha #}
+{% block furniture %}
+    <div class="content-wrapper">
+        {% if messages or form.errors %}
+            <div class="messages">
+                <ul>
+                    {% if form.errors %}
+                        {% if form.errors.captcha %}
+                            <li class="error">{% blocktrans %}Captcha is incorrect. Please try again.{% endblocktrans %}</li>
+                        {% else %}
+                            <li class="error">{% blocktrans %}Your email and password didn't match. Please try again.{% endblocktrans %}</li>
+                        {% endif %}
+                    {% endif %}
+                    {% for message in messages %}
+                        <li class="{{ message.tags }}">{{ message }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        {% endif %}
+
+        {% block above_login %}{% endblock %}
+
+        <form action="{% url 'wagtailadmin_login' %}" method="post" autocomplete="off" novalidate>
+            {% block login_form %}
+            {% csrf_token %}
+
+            {% url 'wagtailadmin_home' as home_url %}
+            <input type="hidden" name="next" value="{{ next|default:home_url }}" />
+
+            <h1>{% block branding_login %}{% trans "Sign in to Scientific Wagtail" %}{% endblock %}</h1>
+
+            <ul class="fields">
+                {% block fields %}
+                <li class="full">
+                    <div class="field iconfield">
+                        {{ form.username.label_tag }}
+                        <div class="input icon-user">
+                            {{ form.username }}
+                        </div>
+                    </div>
+                </li>
+                <li class="full">
+                    <div class="field iconfield">
+                        {{ form.password.label_tag }}
+                        <div class="input icon-password">
+                            {{ form.password }}
+                        </div>
+                    </div>
+                    {% if show_password_reset %}
+                        <p class="help"><a href="{% url 'wagtailadmin_password_reset' %}">{% trans "Forgotten it?" %}</a></p>
+                    {% endif %}
+                </li>
+
+                <li class="full">
+                    <div class="field iconfield">
+                        {{ form.captcha.label_tag }}
+                        <div class="input">
+                            {{ form.captcha }}
+                        </div>
+                    </div>
+                </li>
+
+                {% comment %}
+                    Removed until functionality exists
+                    <li class="checkbox">
+                        <div class="field">
+                            <label><input type="checkbox" />{% trans "Remember me" %}</label>
+                        </div>
+                    </li>
+                {% endcomment %}
+                {% endblock %}
+                <li class="submit">
+                    {% block submit_buttons %}
+                    <button type="submit" class="button button-longrunning" tabindex="3" data-clicked-text="{% trans 'Signing in…' %}"><span class="icon icon-spinner"></span><em>{% trans 'Sign in' %}</em></button>
+                    {% endblock %}
+                </li>
+            </ul>
+        {% endblock %}
+        </form>
+
+        {% block below_login %}{% endblock %}
+
+    </div>
+{% endblock %}

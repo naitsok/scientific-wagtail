@@ -1,0 +1,189 @@
+{% load wagtailcore_tags %}
+{% load wagtailembeds_tags %}
+{% load wagtailimages_tags %}
+{% load wagtailroutablepage_tags %}
+
+{% load humanize %}
+
+{% load mainapp_tags %}
+{% load markdownmath_tags %}
+
+{% if is_in_list %}
+    <h1 class="display-4"><strong><a href="{% post_date_url post root_page %}" class="text-dark">{{ post.title }}</a></strong>
+        {% if post.is_series %}
+        <small class="text-muted"> - Series</small>
+        {% endif %}
+    </h1>
+    {% image post.header_image original class='img-fluid' %}
+{% else %}
+    {% image post.header_image original class='img-fluid' %}
+    <h1 class="display-4"><strong>{{ post.title }}</strong>
+        {% if post.is_series %}
+        <small class="text-muted"> - Series</small>
+        {% endif %}
+    </h1>
+{% endif %}
+
+<article id="{{ post.slug }}" class="post">
+
+    {# context variable 'figure_idx' is needed to count images also in nested loops. Simple with variable is not working in nested loops #}
+    {# eq_idx variables is needed to generate figure and equation numbers #}
+    {# cut_flag indicates if the rendering of post is not proceeding after the first 'cut' block has been met. #}
+    {% set_context_var 'figure_idx' 1 %}
+    {% with fig_idx=0 eq_idx=1 cut_flag=False column_list=0 %}
+
+        <div class="test-justify post-body">
+            {# first render contents if in series and not in list #}
+            {% if post.is_series and not is_in_list %}
+                <h1>
+                    <small class="text-muted">Series contents.</small>
+                </h1>
+                <ul class="list-unstyled">
+                    <li class="lead"><strong><a href="{% post_date_url parent_post root_page %}" class="text-dark">{{ parent_post.title }}</a></strong></li>
+                    <li>
+                        <ul>
+                            {% for p in child_posts %}
+                                {% if p.pk == post.pk %}
+                                    <li><a href="{% post_date_url p root_page %}" class="text-dark"><strong>{{ p.title }}</strong></a></li>
+                                {% else %}
+                                    <li><a href="{% post_date_url p root_page %}" class="text-dark">{{ p.title }}</a></li>
+                                {% endif %}
+                            {% endfor %}
+                        </ul>
+                    </li>
+                </ul>
+            {% endif %}
+
+            {% for block in post.body %}
+                {% if block.block_type == 'cut' and is_in_list %}
+                    <a class="btn btn-info" href="{% post_date_url post root_page %}">
+                        {{ block.value }}
+                        <i class="fas fa-long-arrow-alt-right"></i>
+                    </a>
+                    {% swap_bool cut_flag as cut_flag %}
+
+                {% endif %}
+
+                {% if block.block_type == 'document' %}
+                    {# document block are not displayed. Instead, All the text, with is the same #}
+                    {# as document title gets replaced with the document link. #}
+                    {# document is added to page without regard to cut_flag, so that the links are correctly build when posts are listed #}
+                    
+                    <a href="{{ block.value.url }}" class="doc-link">{{ block.value.title }}</a>
+
+                    {# {% include_block block %} #}
+                    
+                {% endif %}
+
+                {% if not cut_flag %}
+
+                    {% if block.block_type == 'image' %}
+                        {% get_context_var 'figure_idx' as fig_idx %}
+                        {% render_figure block fig_idx post.generate_figure_numbers %}
+                        {% increment_context_var 'figure_idx' %}
+
+                    {% elif block.block_type == 'embed' %}
+                        <div class="embed-responsive embed-responsive-16by9 mb-3">
+                            {% embed block.value.url %}
+                        </div>
+
+                    {% elif block.block_type == 'markdown' %}
+                        {{ block.value|markdown|safe }}
+
+                    {% elif block.block_type == 'equation' %}
+                        {% if post.generate_equation_numbers %}
+                            <dl class="row">
+                                <dt class="col-md-11 ">
+                                    {{ block.value.equation }}
+                                </dt>
+                                <dd class="col-md-1 align-self-center">
+                                    ({{ eq_idx }})
+                                </dd>
+                            </dl>
+                            {% increment_idx eq_idx as eq_idx %}
+                        {% else %}
+                            {{ block.value.equation }}
+                        {% endif %}
+
+                    {% elif block.block_type == 'columns' %}
+                        <div class="row">
+                            {% create_list block.value.left block.value.right as column_list %}
+                            {% for column in column_list %}
+                                <div class="col-md-6">
+                                    {# loop through column blocks #}
+                                    {# need another with variable, because the update in this inner loop does not work #}
+                                    {% for col_block in column %}
+                                        {% if col_block.block_type == 'image' %}
+                                            {% get_context_var 'figure_idx' as fig_idx %}
+                                            {% render_figure col_block fig_idx post.generate_figure_numbers %}
+                                            {% increment_context_var 'figure_idx' %}
+
+                                        {% elif col_block.block_type == 'markdown' %}
+                                            {{ col_block.value|markdown|safe }}
+                                        
+                                        {% else %}
+                                            {% include_block col_block %}
+
+                                        {% endif %}
+
+                                    {% endfor %}                        
+                                </div>
+                            {% endfor %}
+                        </div>
+
+                    {% else %}
+                        {% include_block block %}
+                    
+                    {# end of block types if #}
+                    {% endif %}
+                
+                {# end of cut_flag if #}
+                {% endif %}
+
+            {% endfor %}
+
+        </div>
+
+    {% endwith %}
+
+    <hr />
+        
+    {% if categories or tags %}
+        <dl class="row">
+            {% if  categories %}
+                <dt class="col-md-2 font-italic font-bold">
+                    Posted in: 
+                </dt>
+
+                <dd class="col-md-10 font-italic">
+                    {% for cat in categories %}
+                        <a class="text-body post-category" 
+                            data-slug="{{ cat.blog_category.slug }}" 
+                            href="{% routablepageurl root_page 'posts_by_category' cat.blog_category.slug %}">
+                            {{ cat.blog_category.name }}
+                        </a>
+                        {% if forloop.counter < categories.count %}, {% endif %} 
+                    {% endfor %}
+                </dd>       
+            {% endif %}
+
+            {% if  tags %}
+                <dt class="col-md-2 font-italic">
+                    <span class="btn btn-no-padding font-bold">Tagged by:</span>
+                </dt>
+
+                <dd class="col-md-10">
+                    {% for tag in tags %}
+                        <a class="btn btn-secondary post-tag" 
+                            data-slug="{{ tag.slug }}" 
+                            href="{% routablepageurl root_page 'posts_by_tag' tag.slug %}">
+                            {{ tag }}
+                        </a>
+                    {% endfor %}
+                </dd>
+            {% endif %}
+        </dl>
+        <hr />
+    {% endif %}
+
+</article>

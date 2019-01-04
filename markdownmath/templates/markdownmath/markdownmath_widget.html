@@ -1,0 +1,32 @@
+{% load static %}
+{% load wagtailadmin_tags %}
+
+<div class="field {{ field|fieldtype }} widget-{{ field|widgettype }}{% if name %} fieldname-{{ name }}{% endif %}{% if classes %} {{ classes }}{% endif %}{% if errors %} error{% endif %}"
+    id="{{ prefix }}-markdownx">
+    <div class="field-content">
+        <div class="input">
+            {{ widget|safe }}
+
+            {# This span only used on rare occasions by certain types of input #}
+            <span></span>
+        </div>
+        {% if field.help_text %}
+            <p class="help">{{ field.help_text }}</p>
+        {% endif %}
+
+        {% if errors %}
+            <p class="error-message">
+                {% for error in errors %}
+                    <span>{{ error|escape }}</span>
+                {% endfor %}
+            </p>
+        {% endif %}
+    </div>
+    <script type="text/javascript" src="{% static 'markdownx/js/markdownx.js' %}">
+        mdx_wrapper = $("#{{ prefix }}-markdownx")
+        mdx = new MarkdownX($(mdx_wrapper), $(mdx_wrapper).find('.markdownx-editor'), $(mdx_wrapper).find('.markdownx-preview'));
+    </script>
+    <script type="text/javascript">
+        mutation_observer.observe($("#{{ prefix }}-markdownx").find('.markdownx-preview')[0], observer_config);
+    </script>
+</div>

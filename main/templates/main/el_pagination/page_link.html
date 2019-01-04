@@ -1,0 +1,8 @@
+<li class="page-item">
+    <a class="page-link" 
+        {% if add_nofollow %}rel="nofollow"{% endif %}
+        data-el-querystring-key="{{ querystring_key }}"
+        href="{{ page.path }}">
+        {{ page.label|safe }}
+    </a>
+</li>

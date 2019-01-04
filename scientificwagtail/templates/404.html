@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% load wagtailimages_tags %}
+
+{% block content %}
+    <h1>Page not found</h1>
+
+    <h2>Sorry, this page could not be found.</h2>
+
+    <p class="text-center">
+        {% image root_page.navbar_image original class='img-fluid' %}
+    </p>
+{% endblock %}
