@@ -13,40 +13,36 @@
 
     <h1 class="pt-4">{{ page.title }}</h1>
 
-    {% for block in post.body %}
-        {% if block.block_type == 'paragraph' %}
-            <div class="test-justify">
-                {% include_block block %}
-            </div>
+    <div class="test-justify post-body">
+        {% for block in page.body %}
 
-        {% elif block.block_type == 'image' %}
-            {% render_figure block %}
+            {% if block.block_type == 'image' %}
+                {% render_figure block %}
 
-        {% elif block.block_type == 'embed' %}
-            <div class="embed-responsive embed-responsive-16by9 mb-3">
-                {% embed block.value.url %}
-            </div>
+            {% elif block.block_type == 'embed' %}
+                <div class="embed-responsive embed-responsive-16by9 mb-3">
+                    {% embed block.value.url %}
+                </div>
 
-        {% elif block.block_type == 'markdown' %}
-            <div class="test-justify">
+            {% elif block.block_type == 'markdown' %}
                 {{ block.value|markdown|safe }}
-            </div>
 
-        {% elif block.block_type == 'document' %}
-            {# document block are not displayed. Instead, All the text, with is the same #}
-            {# as document title gets replaced with the document link. #}
-            {# document does not have cut_flag, so that the links are correctly build whn posts listed #}
-            
-            <a href="{{ block.value.url }}" class="doc-link">{{ block.value.title }}</a>
+            {% elif block.block_type == 'document' %}
+                {# document block are not displayed. Instead, All the text, with is the same #}
+                {# as document title gets replaced with the document link. #}
+                {# document does not have cut_flag, so that the links are correctly build whn posts listed #}
+                
+                <a href="{{ block.value.url }}" class="doc-link">{{ block.value.title }}</a>
 
-            {# {% include_block block %} #}
+                {# {% include_block block %} #}
 
-        {% else %}
-            {% include_block block %}
+            {% else %}
+                {% include_block block %}
 
-        {% endif %}
+            {% endif %}
 
-    {% endfor %}
+        {% endfor %}
+    </div>
 
 {% endblock %}
 

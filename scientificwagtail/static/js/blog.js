@@ -88,7 +88,7 @@ function replaceTextWithDocumentLinks() {
             $(postElem).find('*').each(function(idx, elem) {
                 var linkText = $(docElem).text();
                 if($(elem).text().indexOf(linkText) > -1) {
-                    $(elem).html($(elem).text().replace(
+                    $(elem).html($(elem).html().replace(
                         new RegExp(linkText, 'g'),
                         '<a href="' + $(docElem).attr('href') + '">' + linkText + '</a>'
                     ));

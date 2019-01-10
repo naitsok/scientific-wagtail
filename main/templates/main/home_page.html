@@ -13,7 +13,7 @@
     {# el-pagination page number and pages variable #}
     {% show_current_number as current_page_number %}
 
-    {% if pinned_posts.count and current_page_number <= 1 %}
+    {% if pinned_posts and current_page_number <= 1 %}
     
         <h3>
             Pinned posts: 
@@ -21,16 +21,18 @@
         </h3>
 
         {% for post in pinned_posts %}
-            {% render_post post post.categories.all post.tags.all True %}
+            {% render_post post post.blog_categories.all post.tags.all True %}
             <br />
         {% endfor %}
 
         <br />
 
+        {% if posts %}
         <h3>
             Recent posts: 
             <small class="text-muted">Newcomers.</small>
         </h3>
+        {% endif %}
 
     {% endif %}
 
@@ -41,7 +43,6 @@
         </h3>
     {% endif %}
 
-    {% paginate 3 posts %}
     {% for post in posts %}
         {% render_post post post.blog_categories.all post.tags.all True %}
         <br />
