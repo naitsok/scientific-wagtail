@@ -43,6 +43,7 @@
         </h3>
     {% endif %}
 
+    {% paginate posts_per_page posts %}
     {% for post in posts %}
         {% render_post post post.blog_categories.all post.tags.all True %}
         <br />

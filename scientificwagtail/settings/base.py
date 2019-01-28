@@ -358,8 +358,8 @@ TAG_CLOUD_TAG_LIMIT = -1
 # number of archive dates to display before the rest of the list is hidden
 DISPLAY_ARCHIVE_LENGTH = 5
 
-# Number of recent posts to display
-RECENT_POSTS_LENGTH = 5
+# Number of recent posts to display per page
+POSTS_PER_PAGE = 5
 
 # Disqus settings
 DISQUS_URL = 'https://example.disqus.com/embed.js'

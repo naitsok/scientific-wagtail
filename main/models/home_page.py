@@ -3,6 +3,7 @@ from datetime import date
 
 from django.db import models
 from django.db.models import Count
+from django.conf import settings
 from django.contrib.contenttypes.fields import GenericRelation
 from django.http import Http404, HttpResponse
 from django.shortcuts import render
@@ -106,6 +107,8 @@ class HomePage(RoutablePageMixin, Page, HitCountMixin):
         if not self.search_term.endswith('.'):
             self.search_term = self.search_term + '.'
         context['search_term'] = self.search_term
+        posts_per_page = getattr(settings, 'POSTS_PER_PAGE', 5)
+        context['posts_per_page'] = posts_per_page
 
         return context
 
