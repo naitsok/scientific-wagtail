@@ -15,12 +15,15 @@ from wagtail.search import index
 from wagtailmenus.models import MenuPageMixin
 from wagtailmenus.panels import menupage_panel
 
-from markdownmath.blocks import MarkdownxBlock
-
 from hitcount.models import HitCountMixin, HitCount
 from hitcount.views import HitCountMixin as ViewHitCountMixin
 
-from main.blocks import CustomBlockquoteBlock, TwoColumnBlock
+from sciwagblocks.blocks import (
+    TwoColumnBlock, 
+    CaptionedImageBlock,
+    CustomBlockquoteBlock,
+    MarkdownxBlock,
+)
 from main.edit_handlers import ReadOnlyPanel
 
 

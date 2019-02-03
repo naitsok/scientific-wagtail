@@ -7,7 +7,7 @@ from django.conf import settings
 MARKDOWNX_URLS_PATH = getattr(settings, 'MARKDOWNX_URLS_PATH', 'markdownx/markdownify')
 
 
-class MarkdownMathAccessMiddleware:
+class MarkdownxAccessMiddleware:
     """
     Middleware that provides access for markdown to HTML path. 
     The access is always allowed for logged in users.

@@ -6,7 +6,7 @@ from django.template.loader import render_to_string
 from wagtail.core import blocks
 from wagtail.contrib.table_block.blocks import TableBlock
 
-from markdownmath.blocks import MarkdownxBlock
+from .markdownx_block import MarkdownxBlock
 
 
 DEFAULT_TABLE_OPTIONS = {
@@ -155,11 +155,11 @@ class ColWidthTableBlock(TableBlock):
     @property
     def media(self):
         return forms.Media(
-            css = {'all': ['table_block/css/vendor/handsontable.full.min.css']},
+            css = {'all': ['sciwagblocks/table_block/css/vendor/handsontable.full.min.css']},
             js = [
-                'table_block/js/vendor/handsontable.full.min.js',
-                'table_block/js/vendor/en-US.min.js', 
-                'table_block/js/table.js',
+                'sciwagblocks/table_block/js/vendor/handsontable.full.min.js',
+                'sciwagblocks/table_block/js/vendor/en-US.min.js', 
+                'sciwagblocks/table_block/js/table.js',
                 ]
             )
 

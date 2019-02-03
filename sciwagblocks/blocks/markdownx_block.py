@@ -41,7 +41,7 @@ class MarkdownxBlock(blocks.FieldBlock):
             widget_html = widget.render(prefix, field_value, attrs=widget_attrs)
             widget_has_rendered_errors = False
 
-        return render_to_string('markdownmath_widget.html', {
+        return render_to_string('markdownx/markdownx_block_widget.html', {
             'name': self.name,
             'classes': self.meta.classname,
             'prefix': prefix,

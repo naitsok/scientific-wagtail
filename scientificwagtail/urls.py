@@ -12,7 +12,7 @@ from search import views as search_views
 DJANGO_ADMIN_BASE_URL =  getattr(settings, 'DJANGO_ADMIN_BASE_URL', r'^django-admin/')
 WAGTAIL_ADMIN_BASE_URL =  getattr(settings, 'WAGTAIL_ADMIN_BASE_URL', r'^admin/')
 WAGTAIL_DOCUMENTS_BASE_URL =  getattr(settings, 'WAGTAIL_DOCUMENTS_BASE_URL', r'^documents/')
-MARKDOWNMATH_BASE_URL =  getattr(settings, 'MARKDOWNMATH_BASE_URL', r'^markdownx/')
+MARKDOWNX_BASE_URL =  getattr(settings, 'MARKDOWNX_BASE_URL', r'^markdownx/')
 CAPTCHA_BASE_URL = getattr(settings, 'CAPTCHA_BASE_URL', r'^captcha/')
 
 
@@ -24,7 +24,7 @@ urlpatterns = [
 
     # url(r'^search/$', search_views.search, name='search'),
     # according to django-markdownx docs
-    re_path(MARKDOWNMATH_BASE_URL, include('markdownx.urls')),
+    re_path(MARKDOWNX_BASE_URL, include('markdownx.urls')),
     # according to django-simple-captcha docs
     re_path(CAPTCHA_BASE_URL, include('captcha.urls')),
 

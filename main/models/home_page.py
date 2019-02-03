@@ -107,7 +107,7 @@ class HomePage(RoutablePageMixin, Page, HitCountMixin):
         if not self.search_term.endswith('.'):
             self.search_term = self.search_term + '.'
         context['search_term'] = self.search_term
-        posts_per_page = getattr(settings, 'POSTS_PER_PAGE', 5)
+        posts_per_page = getattr(settings, 'EL_PAGINATION_PER_PAGE', 5)
         context['posts_per_page'] = posts_per_page
 
         return context

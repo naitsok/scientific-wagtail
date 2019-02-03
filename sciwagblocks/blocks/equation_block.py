@@ -1,15 +1,18 @@
 from django.utils.safestring import mark_safe
 from django.template.loader import render_to_string
 from django.forms import Widget, CharField
-from wagtail.core.blocks import FieldBlock
+
+from wagtail.core import blocks
+
+from .markdownx_block import MarkdownxBlock
 
 
 class EquationWidget(Widget):
-    template_name = 'equation/widget.html'
+    template_name = 'equation_block/widget.html'
     class Media:
         js = [
             'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js',
-            'equation/js/equation.js',
+            'sciwagblocks/equation_block/js/equation.js',
         ]
 
     def get_context(self, name, value, attrs):
@@ -33,7 +36,7 @@ class EquationWidget(Widget):
         return mark_safe(render_to_string(self.template_name, context))
 
 
-class EquationBlock(FieldBlock):
+class EquationBlock(blocks.FieldBlock):
     def __init__(self, required=True, help_text=None, **kwargs):
         self.field = CharField(required=required, help_text=help_text, widget=EquationWidget())
         super(EquationBlock, self).__init__(**kwargs)
@@ -42,6 +45,17 @@ class EquationBlock(FieldBlock):
         return value
 
     class Meta:
+        template = 'equation_block/equation.html'
         icon = 'cog'
 
     
+class CaptionedEquationBlock(blocks.StructBlock):
+    """Block that contains equation block and markdownmath block for caption.
+    The caption is displayed only when the equation is opened in modal.
+    The caption never appears in main text of post."""
+    equation = EquationBlock()
+    caption = MarkdownxBlock(required=False)
+
+    class Meta:
+        template = 'equation_block/captioned_equation.html'
+        icon = 'cogs'

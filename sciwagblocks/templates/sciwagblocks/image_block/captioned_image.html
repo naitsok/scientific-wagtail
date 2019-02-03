@@ -1,0 +1,12 @@
+{% load wagtailimages_tags %}
+{% load sciwagblocks_tags %}
+{% load mainapp_tags %}
+
+<figure class="figure">
+    {% image self.image original class='img-fluid' %}
+    {% if self.caption %}
+        <figcaption class="figure-caption">
+            {{ self.caption|markdown|safe }}
+        </figcaption>
+    {% endif %}
+</figure>

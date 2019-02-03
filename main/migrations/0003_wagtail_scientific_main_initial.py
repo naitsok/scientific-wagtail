@@ -2,9 +2,9 @@
 
 from django.db import migrations, models
 import django.db.models.deletion
-import equation.blocks
+import sciwagblocks.blocks
 import hitcount.models
-import markdownmath.blocks
+import sciwagblocks.blocks
 import modelcluster.contrib.taggit
 import modelcluster.fields
 import wagtail.core.blocks
@@ -42,7 +42,53 @@ class Migration(migrations.Migration):
                 ('page_ptr', models.OneToOneField(auto_created=True, on_delete=django.db.models.deletion.CASCADE, parent_link=True, primary_key=True, serialize=False, to='wagtailcore.Page')),
                 ('repeat_in_subnav', models.BooleanField(default=False, help_text="If checked, a link to this page will be repeated alongside it's direct children when displaying a sub-navigation for this page.", verbose_name='repeat in sub-navigation')),
                 ('repeated_item_text', models.CharField(blank=True, help_text="e.g. 'Section home' or 'Overview'. If left blank, the page title will be used.", max_length=255, verbose_name='repeated item link text')),
-                ('body', wagtail.core.fields.StreamField([('paragraph', wagtail.core.blocks.RichTextBlock()), ('quote', wagtail.core.blocks.StructBlock([('quote', wagtail.core.blocks.TextBlock(help_text='Quote text.', required=True, rows=3)), ('author', wagtail.core.blocks.CharBlock(help_text='Author of the quoted text.', required=False)), ('source', wagtail.core.blocks.CharBlock(help_text='Source of the quoted text.', required=False))], classname='full')), ('image', wagtail.images.blocks.ImageChooserBlock()), ('embed', wagtail.embeds.blocks.EmbedBlock()), ('markdown', markdownmath.blocks.MarkdownxBlock()), ('columns', wagtail.core.blocks.StructBlock([('left', wagtail.core.blocks.StreamBlock([('paragraph', wagtail.core.blocks.RichTextBlock()), ('image', wagtail.core.blocks.StructBlock([('image', wagtail.images.blocks.ImageChooserBlock()), ('caption', markdownmath.blocks.MarkdownxBlock(required=False))])), ('markdown', markdownmath.blocks.MarkdownxBlock()), ('pages', wagtail.core.blocks.PageChooserBlock())], icon='arrow-left', label='Left column content')), ('right', wagtail.core.blocks.StreamBlock([('paragraph', wagtail.core.blocks.RichTextBlock()), ('image', wagtail.core.blocks.StructBlock([('image', wagtail.images.blocks.ImageChooserBlock()), ('caption', markdownmath.blocks.MarkdownxBlock(required=False))])), ('markdown', markdownmath.blocks.MarkdownxBlock()), ('pages', wagtail.core.blocks.PageChooserBlock())], icon='arrow-right', label='Right column content'))])), ('pages', wagtail.core.blocks.PageChooserBlock()), ('document', wagtail.documents.blocks.DocumentChooserBlock())])),
+                ('body', wagtail.core.fields.StreamField(
+                    [
+                        ('paragraph', wagtail.core.blocks.RichTextBlock()), 
+                        ('quote', wagtail.core.blocks.StructBlock(
+                            [
+                                ('quote', wagtail.core.blocks.TextBlock(help_text='Quote text.', required=True, rows=3)), 
+                                ('author', wagtail.core.blocks.CharBlock(help_text='Author of the quoted text.', required=False)), 
+                                ('source', wagtail.core.blocks.CharBlock(help_text='Source of the quoted text.', required=False))
+                            ], classname='full')
+                        ), 
+                        ('image', wagtail.images.blocks.ImageChooserBlock()), 
+                        ('embed', wagtail.embeds.blocks.EmbedBlock()), 
+                        ('markdown', sciwagblocks.blocks.MarkdownxBlock()), 
+                        ('columns', wagtail.core.blocks.StructBlock(
+                            [
+                                ('left', wagtail.core.blocks.StreamBlock(
+                                    [
+                                        ('paragraph', wagtail.core.blocks.RichTextBlock()), 
+                                        ('image', wagtail.core.blocks.StructBlock(
+                                            [
+                                                ('image', wagtail.images.blocks.ImageChooserBlock()), 
+                                                ('caption', sciwagblocks.blocks.MarkdownxBlock(required=False))
+                                            ])
+                                        ), 
+                                        ('markdown', sciwagblocks.blocks.MarkdownxBlock()), 
+                                        ('pages', wagtail.core.blocks.PageChooserBlock())
+                                    ], icon='arrow-left', label='Left column content')
+                                ), 
+                                ('right', wagtail.core.blocks.StreamBlock(
+                                    [
+                                        ('paragraph', wagtail.core.blocks.RichTextBlock()), 
+                                        ('image', wagtail.core.blocks.StructBlock(
+                                            [
+                                                ('image', wagtail.images.blocks.ImageChooserBlock()), 
+                                                ('caption', sciwagblocks.blocks.MarkdownxBlock(required=False))
+                                            ])
+                                        ), 
+                                        ('markdown', sciwagblocks.blocks.MarkdownxBlock()), 
+                                        ('pages', wagtail.core.blocks.PageChooserBlock())
+                                    ], icon='arrow-right', label='Right column content')
+                                )
+                            ])
+                        ), 
+                        ('pages', wagtail.core.blocks.PageChooserBlock()), 
+                        ('document', wagtail.documents.blocks.DocumentChooserBlock())
+                    ])
+                ),
                 ('show_search', models.BooleanField(default=True, help_text='Adds search form to the page sidebar.', verbose_name='Show search on sidebar')),
                 ('show_tag_cloud', models.BooleanField(default=True, help_text='Adds tag cloud to the page sidebar.', verbose_name='Show tag cloud')),
                 ('show_categories', models.BooleanField(default=True, help_text='Adds categories to the page sidebar.', verbose_name='Show categories')),
@@ -98,7 +144,65 @@ class Migration(migrations.Migration):
             name='PostPage',
             fields=[
                 ('page_ptr', models.OneToOneField(auto_created=True, on_delete=django.db.models.deletion.CASCADE, parent_link=True, primary_key=True, serialize=False, to='wagtailcore.Page')),
-                ('body', wagtail.core.fields.StreamField([('cut', wagtail.core.blocks.CharBlock(classname='full subtitle', help_text='After this block the post will be cutted when displayed on the home page. On the post page this field is ignored.')), ('paragraph', wagtail.core.blocks.RichTextBlock()), ('quote', wagtail.core.blocks.StructBlock([('quote', wagtail.core.blocks.TextBlock(help_text='Quote text.', required=True, rows=3)), ('author', wagtail.core.blocks.CharBlock(help_text='Author of the quoted text.', required=False)), ('source', wagtail.core.blocks.CharBlock(help_text='Source of the quoted text.', required=False))], classname='full')), ('image', wagtail.core.blocks.StructBlock([('image', wagtail.images.blocks.ImageChooserBlock()), ('caption', markdownmath.blocks.MarkdownxBlock(required=False))])), ('embed', wagtail.embeds.blocks.EmbedBlock()), ('document', wagtail.documents.blocks.DocumentChooserBlock(help_text='All the text in other blocks, which is the same as document title will be replaced with the link to the document.')), ('markdown', markdownmath.blocks.MarkdownxBlock()), ('equation', wagtail.core.blocks.StructBlock([('equation', equation.blocks.EquationBlock()), ('caption', markdownmath.blocks.MarkdownxBlock(required=False))])), ('pages', wagtail.core.blocks.PageChooserBlock()), ('columns', wagtail.core.blocks.StructBlock([('left', wagtail.core.blocks.StreamBlock([('paragraph', wagtail.core.blocks.RichTextBlock()), ('image', wagtail.core.blocks.StructBlock([('image', wagtail.images.blocks.ImageChooserBlock()), ('caption', markdownmath.blocks.MarkdownxBlock(required=False))])), ('markdown', markdownmath.blocks.MarkdownxBlock()), ('pages', wagtail.core.blocks.PageChooserBlock())], icon='arrow-left', label='Left column content')), ('right', wagtail.core.blocks.StreamBlock([('paragraph', wagtail.core.blocks.RichTextBlock()), ('image', wagtail.core.blocks.StructBlock([('image', wagtail.images.blocks.ImageChooserBlock()), ('caption', markdownmath.blocks.MarkdownxBlock(required=False))])), ('markdown', markdownmath.blocks.MarkdownxBlock()), ('pages', wagtail.core.blocks.PageChooserBlock())], icon='arrow-right', label='Right column content'))]))])),
+                ('body', wagtail.core.fields.StreamField(
+                    [
+                        ('cut', wagtail.core.blocks.CharBlock(classname='full subtitle', help_text='After this block the post will be cutted when displayed on the home page. On the post page this field is ignored.')), 
+                        ('paragraph', wagtail.core.blocks.RichTextBlock()), 
+                        ('quote', wagtail.core.blocks.StructBlock(
+                            [
+                                ('quote', wagtail.core.blocks.TextBlock(help_text='Quote text.', required=True, rows=3)), 
+                                ('author', wagtail.core.blocks.CharBlock(help_text='Author of the quoted text.', required=False)), 
+                                ('source', wagtail.core.blocks.CharBlock(help_text='Source of the quoted text.', required=False))
+                            ], classname='full')
+                        ), 
+                        ('image', wagtail.core.blocks.StructBlock(
+                            [
+                                ('image', wagtail.images.blocks.ImageChooserBlock()), 
+                                ('caption', sciwagblocks.blocks.MarkdownxBlock(required=False))
+                            ])
+                        ), 
+                        ('embed', wagtail.embeds.blocks.EmbedBlock()), 
+                        ('document', wagtail.documents.blocks.DocumentChooserBlock(help_text='All the text in other blocks, which is the same as document title will be replaced with the link to the document.')), 
+                        ('markdown', sciwagblocks.blocks.MarkdownxBlock()), 
+                        ('equation', wagtail.core.blocks.StructBlock(
+                            [
+                                ('equation', sciwagblocks.blocks.EquationBlock()), 
+                                ('caption', sciwagblocks.blocks.MarkdownxBlock(required=False))
+                            ])
+                        ), 
+                        ('pages', wagtail.core.blocks.PageChooserBlock()), 
+                        ('columns', wagtail.core.blocks.StructBlock(
+                            [
+                                ('left', wagtail.core.blocks.StreamBlock(
+                                    [
+                                        ('paragraph', wagtail.core.blocks.RichTextBlock()), 
+                                        ('image', wagtail.core.blocks.StructBlock(
+                                            [
+                                                ('image', wagtail.images.blocks.ImageChooserBlock()), 
+                                                ('caption', sciwagblocks.blocks.MarkdownxBlock(required=False))
+                                            ])
+                                        ), 
+                                        ('markdown', sciwagblocks.blocks.MarkdownxBlock()), 
+                                        ('pages', wagtail.core.blocks.PageChooserBlock())
+                                    ], icon='arrow-left', label='Left column content')
+                                ), 
+                                ('right', wagtail.core.blocks.StreamBlock(
+                                    [
+                                        ('paragraph', wagtail.core.blocks.RichTextBlock()), 
+                                        ('image', wagtail.core.blocks.StructBlock(
+                                            [
+                                                ('image', wagtail.images.blocks.ImageChooserBlock()), 
+                                                ('caption', sciwagblocks.blocks.MarkdownxBlock(required=False))
+                                            ])
+                                        ), 
+                                        ('markdown', sciwagblocks.blocks.MarkdownxBlock()), 
+                                        ('pages', wagtail.core.blocks.PageChooserBlock())
+                                    ], icon='arrow-right', label='Right column content')
+                                )
+                            ])
+                        )
+                    ])
+                ),
                 ('pin_on_home', models.BooleanField(default=False, help_text='Indicates if the Post is pinned on the Home page.', verbose_name='Pin on Home page')),
                 ('show_sidebar', models.BooleanField(default=True, help_text='Indicates if the sidebar with contents, figures and equations is shown on the page.', verbose_name='Show sidebar')),
                 ('show_comments', models.BooleanField(default=True, help_text='Indicates if comments are shown on the page.', verbose_name='Show comments')),

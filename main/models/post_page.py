@@ -23,19 +23,18 @@ from wagtail.search import index
 from wagtail.snippets.models import register_snippet
 from wagtail.snippets.edit_handlers import SnippetChooserPanel
 
-from markdownmath.blocks import MarkdownxBlock
-
-from equation.blocks import EquationBlock
-
 from hitcount.models import HitCountMixin, HitCount
 from hitcount.views import HitCountMixin as ViewHitCountMixin
 
 from main.edit_handlers import ReadOnlyPanel
-from main.blocks import (
-    CustomBlockquoteBlock, CaptionedEquationBlock, 
-    CaptionedImageBlock, TwoColumnBlock, # TableColWidthBlock
+from sciwagblocks.blocks import (
+    CaptionedTableBlock, 
+    CaptionedEquationBlock,
+    TwoColumnBlock,
+    CaptionedImageBlock,
+    CustomBlockquoteBlock,
+    MarkdownxBlock,
 )
-from sciwagblocks.blocks import CaptionedTableBlock
 
 
 class PostPage(Page, HitCountMixin):

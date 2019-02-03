@@ -6,7 +6,7 @@
 {% load humanize %}
 
 {% load mainapp_tags %}
-{% load markdownmath_tags %}
+{% load sciwagblocks_tags %}
 
 {% if is_in_list %}
     <h1 class="display-4"><strong><a href="{% post_date_url post root_page %}" class="text-dark">{{ post.title }}</a></strong>
@@ -102,6 +102,7 @@
                             </dl>
                             {% increment_idx eq_idx as eq_idx %}
                         {% else %}
+                            {# no caption of equation is included; caption is included only in the sidebar and dialog popup. #}
                             {{ block.value.equation }}
                         {% endif %}
 

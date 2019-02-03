@@ -27,8 +27,6 @@ INSTALLED_APPS = [
     'users',
     'main',
     'search',
-    'markdownmath',
-    'equation',
     'sciwagblocks',
 
     'wagtail.contrib.forms',
@@ -78,7 +76,7 @@ MIDDLEWARE = [
     'wagtail.contrib.redirects.middleware.RedirectMiddleware',
 
     'main.middleware.DjangoAdminAccessMiddleware',
-    'markdownmath.middleware.MarkdownMathAccessMiddleware',
+    'sciwagblocks.middleware.MarkdownxAccessMiddleware',
 ]
 
 ROOT_URLCONF = 'scientificwagtail.urls'
@@ -229,7 +227,7 @@ MARKDOWNX_MARKDOWN_EXTENSIONS = [
     'markdown.extensions.codehilite',
     'markdown.extensions.sane_lists',
     'markdown.extensions.toc',
-    'markdownmath.extensions.mathjax',
+    'sciwagblocks.extensions.mathjax',
 ]
 
 MARKDOWNX_MARKDOWN_EXTENSION_CONFIGS = {
@@ -238,7 +236,7 @@ MARKDOWNX_MARKDOWN_EXTENSION_CONFIGS = {
         },
 }
 
-MARKDOWNX_MARKDOWNIFY_FUNCTION = 'markdownmath.utils.markdownify'
+MARKDOWNX_MARKDOWNIFY_FUNCTION = 'sciwagblocks.utils.markdownify'
 
 
 # Wagtail menus settings
@@ -266,7 +264,7 @@ HITCOUNT_KEEP_HIT_ACTIVE  = {'days' : 30 }
 
 # markdownmath app settings
 
-MARKDOWNMATH_WHITELIST_TAGS = [
+MARKDOWNX_WHITELIST_TAGS = [
   'a',
   'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
   'abbr',
@@ -295,7 +293,7 @@ MARKDOWNMATH_WHITELIST_TAGS = [
   'br',
 ]
 
-MARKDOWNMATH_WHITELIST_ATTRS = [
+MARKDOWNX_WHITELIST_ATTRS = [
     'href',
     'src',
     'alt',
@@ -304,31 +302,31 @@ MARKDOWNMATH_WHITELIST_ATTRS = [
     'style',
 ]
 
-MARKDOWNMATH_WHITELIST_STYLES = [
+MARKDOWNX_WHITELIST_STYLES = [
     'color',
     'font-weight',
     'font-size',
 ]
 
-MARKDOWMATH_WHITELIST_PROTOCOLS = ['http', 'https', 'mailto']
+MARKDOWNX_WHITELIST_PROTOCOLS = ['http', 'https', 'mailto']
 
 # Linkify links appeared in text
-MARKDOWNMATH_LINKIFY_TEXT = True
+MARKDOWNX_LINKIFY_TEXT = True
 
 # Linkify emails
-MARKDOWMATH_LINKIFY_PARSE_EMAIL = True
+MARKDOWNX_LINKIFY_PARSE_EMAIL = True
 
 # callbacks to modify your links
-MARKDOMATH_LINKIFY_CALLBACKS = None
+MARKDOWNX_LINKIFY_CALLBACKS = None
 
 # do not linify content inside of these tags
-MARKDOWMATH_LINKIFY_SKIP_TAGS = ['pre', 'code',]
+MARKDOWNX_LINKIFY_SKIP_TAGS = ['pre', 'code',]
 
 # if True - strip tags, if False - escape tags
-MARKDOWNMATH_STRIP = True
+MARKDOWNX_STRIP = True
 
 # if False - not bleaching
-MARKDOWNMATH_BLEACH = True
+MARKDOWNX_BLEACH = True
 
 
 # main app settings
@@ -340,7 +338,7 @@ WAGTAIL_DOCUMENTS_BASE_URL = r'^documents/'
 
 DJANGO_ADMIN_BASE_URL = r'^django-admin/'
 
-MARKDOWNMATH_BASE_URL = r'^markdownx/'
+MARKDOWNX_BASE_URL = r'^markdownx/'
 
 CAPTCHA_BASE_URL = r'^captcha/'
 
@@ -360,9 +358,6 @@ TAG_CLOUD_TAG_LIMIT = -1
 
 # number of archive dates to display before the rest of the list is hidden
 DISPLAY_ARCHIVE_LENGTH = 5
-
-# Number of recent posts to display per page
-POSTS_PER_PAGE = 5
 
 # Disqus settings
 DISQUS_URL = 'https://example.disqus.com/embed.js'

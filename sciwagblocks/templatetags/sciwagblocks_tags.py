@@ -1,14 +1,14 @@
-
-from functools import partial
-
 from django import template
-from django.conf import settings
 
-import bleach
-from markdownmath.utils import markdownify
+from sciwagblocks.utils import markdownify
 
 
 register = template.Library()
+
+
+@register.filter
+def index(lst, idx):
+    return lst[idx]
 
 
 @register.filter()
