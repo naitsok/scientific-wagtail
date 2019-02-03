@@ -29,11 +29,13 @@ INSTALLED_APPS = [
     'search',
     'markdownmath',
     'equation',
+    'sciwagblocks',
 
     'wagtail.contrib.forms',
     'wagtail.contrib.modeladmin',
     'wagtail.contrib.redirects',
     'wagtail.contrib.routable_page',
+    'wagtail.contrib.table_block',
     'wagtail.embeds',
     'wagtail.sites',
     'wagtail.users',
@@ -89,6 +91,7 @@ TEMPLATES = [
             os.path.join(BASE_DIR, 'main', 'templates', 'main'),
             os.path.join(BASE_DIR, 'users', 'templates', 'users'),
             os.path.join(BASE_DIR, 'markdownmath', 'templates', 'markdownmath'),
+            os.path.join(BASE_DIR, 'sciwagblocks', 'templates', 'sciwagblocks'),
         ],
         'APP_DIRS': True,
         'OPTIONS': {

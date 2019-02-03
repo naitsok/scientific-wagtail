@@ -33,8 +33,9 @@ from hitcount.views import HitCountMixin as ViewHitCountMixin
 from main.edit_handlers import ReadOnlyPanel
 from main.blocks import (
     CustomBlockquoteBlock, CaptionedEquationBlock, 
-    CaptionedImageBlock, TwoColumnBlock
+    CaptionedImageBlock, TwoColumnBlock, # TableColWidthBlock
 )
+from sciwagblocks.blocks import CaptionedTableBlock
 
 
 class PostPage(Page, HitCountMixin):
@@ -64,6 +65,7 @@ class PostPage(Page, HitCountMixin):
         ('equation', CaptionedEquationBlock()),
         ('pages', blocks.PageChooserBlock()),
         ('columns', TwoColumnBlock()),
+        ('table', CaptionedTableBlock()),
         ])
     pin_on_home = models.BooleanField(
         default=False,

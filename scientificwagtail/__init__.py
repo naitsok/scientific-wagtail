@@ -1,0 +1,5 @@
+# Sceintific Wagtail version information
+
+
+__version__ = '1.0.1'
+__build__ = ''

@@ -1,0 +1,45 @@
+{% load markdownmath_tags %}
+{% load sciwagblocksapp_tags %}
+
+{% load markdownmath_tags %}
+{% load sciwagblocksapp_tags %}
+
+<table class="table table-sm table-striped">
+    {% if self.caption %}
+        <caption>{{ self.caption|markdown|safe }}</caption>
+    {% endif %}
+    {% if table_header %}
+        <thead>
+        <tr>
+            {% for column in table_header %}
+                <th class="{{ header_cell_alignment|index:forloop.counter0 }}" {% if col_widths %} style="width: {{ col_widths|index:forloop.counter0|floatformat:2 }}%;" {% endif %}>
+                    {% if column.strip %}
+                        {{ column.strip|markdown|safe }}
+                    {% endif %}
+                </th>
+            {% endfor %}
+        </tr>
+        </thead>
+    {% endif %}
+    <tbody>
+    {% for row in data %}
+        <tr>
+            {% for column in row %}
+                {% if first_col_is_header and forloop.first %}
+                    <th class="{{ cell_alignment|index:forloop.parentloop.counter0|index:0 }}" {% if col_widths %} style="width: {{ col_widths|index:forloop.counter0|floatformat:2 }}%;" {% endif %}>
+                        {% if column.strip %}
+                            {{ column.strip|markdown|safe }}
+                        {% endif %}
+                    </th>
+                 {% else %}
+                    <td class="{{ cell_alignment|index:forloop.parentloop.counter0|index:forloop.counter0 }}" {% if col_widths %} style="width: {{ col_widths|index:forloop.counter0|floatformat:2 }}%;" {% endif %}>
+                        {% if column.strip %}
+                            {{ column.strip|markdown|safe }}
+                        {% endif %}
+                    </td>
+                 {% endif %}
+            {% endfor %}
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>

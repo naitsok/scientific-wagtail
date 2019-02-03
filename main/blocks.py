@@ -77,3 +77,12 @@ class TwoColumnBlock(blocks.StructBlock):
         template = 'main/components/two_column_block.html'
         icon = 'grip'
         label = 'Two Columns'
+
+
+from wagtail.contrib.table_block.blocks import TableBlock
+
+
+class TableColWidthBlock(TableBlock):
+    """Table Block, where you can set column width.
+    """
+    pass

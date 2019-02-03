@@ -23,8 +23,8 @@
         {% endif %}
     </div>
     <script type="text/javascript" src="{% static 'markdownx/js/markdownx.js' %}">
-        mdx_wrapper = $("#{{ prefix }}-markdownx")
-        mdx = new MarkdownX($(mdx_wrapper), $(mdx_wrapper).find('.markdownx-editor'), $(mdx_wrapper).find('.markdownx-preview'));
+        mdx_wrapper = $("#{{ prefix }}-markdownx");
+        new MarkdownX($(mdx_wrapper), $(mdx_wrapper).find('.markdownx-editor'), $(mdx_wrapper).find('.markdownx-preview'));
     </script>
     <script type="text/javascript">
         mutation_observer.observe($("#{{ prefix }}-markdownx").find('.markdownx-preview')[0], observer_config);
