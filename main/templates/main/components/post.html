@@ -9,7 +9,7 @@
 {% load sciwagblocks_tags %}
 
 {% if is_in_list %}
-    <h1 class="display-4"><strong><a href="{% post_date_url post root_page %}" class="text-dark">{{ post.title }}</a></strong>
+    <h1><a href="{% post_date_url post root_page %}" class="text-dark">{{ post.title }}</a>
         {% if post.is_series %}
         <small class="text-muted"> - Series</small>
         {% endif %}
@@ -17,7 +17,7 @@
     {% image post.header_image original class='img-fluid' %}
 {% else %}
     {% image post.header_image original class='img-fluid' %}
-    <h1 class="display-4"><strong>{{ post.title }}</strong>
+    <h1>{{ post.title }}
         {% if post.is_series %}
         <small class="text-muted"> - Series</small>
         {% endif %}

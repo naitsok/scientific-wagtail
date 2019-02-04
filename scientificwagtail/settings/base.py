@@ -354,6 +354,9 @@ POST_TAG_CLOUD_MAX_WEIGHT = 2.0
 # if -1 - selects all tags
 TAG_CLOUD_TAG_LIMIT = -1
 
+# number of recent posts
+RECENT_POSTS_LENGTH = 5
+
 # Archive settings
 
 # number of archive dates to display before the rest of the list is hidden

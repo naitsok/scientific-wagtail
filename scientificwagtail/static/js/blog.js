@@ -50,22 +50,22 @@ function generateContents() {
 
         $('.post-body').find('*').filter(':header').each(function(idx, header) {
             $(header).attr('id', 'section-' + idx);
-            var padding = 1;
+            var padding = 0;
             var fontSize = 1.5;
             if($(header).prop('tagName') == 'H2') {
-                padding = 2; fontSize = 1.4;
+                padding = 1; fontSize = 1.4;
             }
             if($(header).prop('tagName') == 'H3') {
-                padding = 3; fontSize = 1.3;
+                padding = 2; fontSize = 1.3;
             }
             if($(header).prop('tagName') == 'H4') {
-                padding = 4; fontSize = 1.2;
+                padding = 3; fontSize = 1.2;
             }
             if($(header).prop('tagName') == 'H5') {
-                padding = 5; fontSize = 1.1;
+                padding = 4; fontSize = 1.1;
             }
             if($(header).prop('tagName') == 'H6') {
-                padding = 6; fontSize = 1.0;
+                padding = 5; fontSize = 1.0;
             }
             var link = $('<a></a>')
                 .attr('href', '#section-' + idx)

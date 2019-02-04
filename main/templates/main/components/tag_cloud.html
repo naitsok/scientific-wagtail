@@ -2,7 +2,7 @@
 
 <div class="col-md-12">
     {% if tags %}
-        <h4><strong>All Tags.</strong></h4>
+        <h2>All Tags.</h2>
         <div id="tag-cloud">
             {% for tag in tags %}
                 <a class="text-dark" 
@@ -17,7 +17,7 @@
             {% endfor %}
         </div>
     {% else %}
-        <h4><strong>No Tags.</strong></h4>
+        <h2>No Tags.</h2>
     {% endif %}
 </div>
 <hr />

@@ -23,6 +23,7 @@ from sciwagblocks.blocks import (
     CaptionedImageBlock,
     CustomBlockquoteBlock,
     MarkdownxBlock,
+    CaptionedTableBlock,
 )
 from main.edit_handlers import ReadOnlyPanel
 
@@ -50,12 +51,13 @@ class BlogPage(Page, MenuPageMixin, HitCountMixin):
         # ('heading', blocks.CharBlock(classname='full subtitle')),
         ('paragraph', blocks.RichTextBlock()),
         ('quote', CustomBlockquoteBlock(classname='full')),
-        ('image', ImageChooserBlock()),
+        ('image', CaptionedImageBlock()),
         ('embed', EmbedBlock()),
         ('markdown', MarkdownxBlock()),
         ('columns', TwoColumnBlock()),
         ('pages', blocks.PageChooserBlock()),
         ('document', DocumentChooserBlock()),
+        ('table', CaptionedTableBlock()),
         ])
     show_search = models.BooleanField(
         default=True,

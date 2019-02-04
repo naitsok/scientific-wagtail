@@ -1,7 +1,7 @@
 {% load wagtailroutablepage_tags %}
 
 <div class="col-md-12">
-    <h4><strong>Search.</strong></h4>
+    <h2>Search.</h2>
     <form role="search" method="get" class="form-search" action="{% routablepageurl root_page 'post_search' %}" method="get">
         {% csrf_token %}
         <div class="input-group">
