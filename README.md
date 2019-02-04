@@ -40,7 +40,24 @@ I do not have specific plans yet for further development except keeping it up-to
 
 ### Changelog
 
-##### Version 0.1.0
+##### Version 1.0.3
+- Released 04.02.2019
+- Features:
+	- Blog page now has image with caption and table with caption blocks.
+	- Minor design changes.
+
+##### Version 1.0.2
+- Released 03.02.2019
+- Refactoring:
+	- Moved all blocks for Wagtail stream field to one new Django app, sciwagblocks app.
+
+##### Version 1.0.1
+- Released 03.02.2019
+- Features:
+	- Table and table with caption blocks for Wagtail stream field.
+	- The blocks are added to post page.
+
+##### Version 1.0.0
 - Released 04.01.2019. 
 - Features: 
 	- Custom User model, than can be extended if needed.
