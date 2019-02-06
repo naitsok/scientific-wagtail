@@ -40,6 +40,11 @@ I do not have specific plans yet for further development except keeping it up-to
 
 ### Changelog
 
+##### Version 1.0.4
+- Released 06.02.2019
+- Features:
+	- Sitemap.
+
 ##### Version 1.0.3
 - Released 04.02.2019
 - Features:
