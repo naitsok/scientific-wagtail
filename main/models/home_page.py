@@ -112,23 +112,23 @@ class HomePage(RoutablePageMixin, Page, HitCountMixin):
 
         return context
 
-    def get_all_posts(self):
+    def get_all_live_posts(self):
         """Gets all posts (PostPages). Sorts by first published date."""
         return PostPage.objects.live()
 
     def count_pinned_posts(self):
         """Counts the posts (PostPages), if there are some to be pinned on Home"""
-        return PostPage.objects.filter(pin_on_home=True).count()
+        return self.get_all_live_posts().filter(pin_on_home=True).count()
 
     def get_pinned_posts(self):
         """Returns posts (PostPages) that are pinned on Home.
         Pinned posts are sorted by the last published date."""
-        return PostPage.objects.filter(pin_on_home=True).order_by('-last_published_at')
+        return self.get_all_live_posts().filter(pin_on_home=True).order_by('-last_published_at')
 
     def get_unpinned_posts(self):
         """Returns normal (unpinned) posts (PostPages).
         Normal posts are sorted by the first published date."""
-        return PostPage.objects.filter(pin_on_home=False).order_by('-first_published_at')
+        return self.get_all_live_posts().filter(pin_on_home=False).order_by('-first_published_at')
 
     def hit_counts(self):
         if self.pk is not None:
@@ -151,7 +151,7 @@ class HomePage(RoutablePageMixin, Page, HitCountMixin):
     @route(r'^(\d{4})/(jan?|feb?|mar?|apr?|may?|jun?|jul?|aug?|sep?|oct?|nov?|dec?)/(\d{2})/$')
     def posts_by_date(self, request, year, month=None, day=None, *args, **kwargs):
         """The PostPages are listed by date. No pinned posts after date select."""
-        self.posts = self.get_all_posts().filter(first_published_at__year=year)
+        self.posts = self.get_all_live_posts().filter(first_published_at__year=year)
         self.search_header = _('Filtered by appeared at:')
         self.search_term = year
         if month:
@@ -180,7 +180,7 @@ class HomePage(RoutablePageMixin, Page, HitCountMixin):
     def post_by_date_slug(self, request, year, month, day, slug, *args, **kwargs):
         """Returns PostPage (one post) with date added to the url in addition to
         the slug."""
-        post_page = self.get_all_posts().filter(slug=slug).first()
+        post_page = self.get_all_live_posts().filter(slug=slug).first()
         if not post_page:
             raise Http404
         return post_page.serve(request, *args, **kwargs)
@@ -188,7 +188,7 @@ class HomePage(RoutablePageMixin, Page, HitCountMixin):
     @route(r'^tag/(?P<tag>[-\w]+)/$')
     def posts_by_tag(self, request, tag, *args, **kwargs):
         """The PostPages are listed by tag. No pinned posts after tag select."""
-        self.posts = self.get_all_posts().filter(tags__slug=tag).order_by('-first_published_at')
+        self.posts = self.get_all_live_posts().filter(tags__slug=tag).order_by('-first_published_at')
         self.search_header = _('Filtered by tag:')
         self.search_term = TagProxy.objects.get(slug=tag).name
 
@@ -197,7 +197,7 @@ class HomePage(RoutablePageMixin, Page, HitCountMixin):
     @route(r'^category/(?P<category>[-\w]+)/$')
     def posts_by_category(self, request, category, *args, **kwargs):
         """The PostPages are listed by tag. No pinned posts after tag select."""
-        self.posts = self.get_all_posts().filter(blog_categories__blog_category__slug=category).order_by('-first_published_at')
+        self.posts = self.get_all_live_posts().filter(blog_categories__blog_category__slug=category).order_by('-first_published_at')
         self.search_header = _('Posts in category:')
         self.search_term = BlogCategory.objects.get(slug=category).name
 
@@ -206,7 +206,7 @@ class HomePage(RoutablePageMixin, Page, HitCountMixin):
     @route(r'^by/(?P<username>[-_\w\@\+\.]+)/$')
     def posts_by_owner(self, request, username, *args, **kwargs):
         """The posts listed by owner username."""
-        self.posts = self.get_all_posts().filter(owner__username=username).order_by('-first_published_at')
+        self.posts = self.get_all_live_posts().filter(owner__username=username).order_by('-first_published_at')
         self.search_header = _('Posts published by:')
         self.search_term = username
 
@@ -216,7 +216,7 @@ class HomePage(RoutablePageMixin, Page, HitCountMixin):
     def post_search(self, request, *args, **kwargs):
         search_query = request.GET.get('q', None)
         if search_query:
-            self.posts = self.get_all_posts().search(search_query)
+            self.posts = self.get_all_live_posts().search(search_query)
             self.search_header = _('Search results for:')
             self.search_term = search_query
 
