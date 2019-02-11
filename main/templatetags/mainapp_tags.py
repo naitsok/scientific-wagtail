@@ -90,7 +90,7 @@ def render_blog_categories(context, home_page):
     home_page is needed for url generation. Also counts
     number of posts per category."""
     context.update({
-        'categories': BlogCategory.objects.annotate(num_posts=Count('post_pages')),
+        'categories': BlogCategory.objects.annotate(num_posts=Count('post_pages')).order_by('name'),
     })
     return context
 

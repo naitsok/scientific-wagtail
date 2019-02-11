@@ -178,10 +178,10 @@ class PostPage(Page, HitCountMixin):
         context['post'] = self
         context['tags'] = self.tags.all()
         context['categories'] = self.blog_categories.all()
-        context['previous_post'] = PostPage.objects.filter(
+        context['previous_post'] = PostPage.objects.live().filter(
             first_published_at__lt=self.first_published_at
         ).order_by('-first_published_at').first()
-        context['next_post'] = PostPage.objects.filter(
+        context['next_post'] = PostPage.objects.live().filter(
             first_published_at__gt=self.first_published_at
         ).order_by('first_published_at').first()
 
@@ -195,12 +195,11 @@ class PostPage(Page, HitCountMixin):
             context['child_posts'] = parent_page.get_descendants().live()
         else:
             # this is a normal post, check if it is series
-            child_posts = self.get_descendants().live()
-            if child_posts:
+            if self.get_descendant_count() > 0:
                 # this post is the parent post for series
                 context['is_series'] = True
                 context['parent_post'] = self
-                context['child_posts'] = child_posts
+                context['child_posts'] = self.get_descendants().live()
 
         return context
 

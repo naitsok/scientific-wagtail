@@ -109,3 +109,11 @@
 .text-blue {
     color: rgb(0, 123, 255);
 }
+
+.post-body p {
+    font-size: 1.05rem;
+}
+
+.post-body table p {
+    font-size: 1rem;
+}

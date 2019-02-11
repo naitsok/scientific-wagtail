@@ -10,7 +10,7 @@
 
 {% if is_in_list %}
     <h1><a href="{% post_date_url post root_page %}" class="text-dark">{{ post.title }}</a>
-        {% if post.is_series %}
+        {% if post.is_series and is_in_list %}
         <small class="text-muted"> - Series</small>
         {% endif %}
     </h1>
@@ -18,7 +18,7 @@
 {% else %}
     {% image post.header_image original class='img-fluid' %}
     <h1>{{ post.title }}
-        {% if post.is_series %}
+        {% if post.is_series and is_in_list %}
         <small class="text-muted"> - Series</small>
         {% endif %}
     </h1>
@@ -33,22 +33,26 @@
     {% with fig_idx=0 eq_idx=1 cut_flag=False column_list=0 %}
 
         <div class="test-justify post-body">
-            {# first render contents if in series and not in list #}
+            {# first render contents if in series and not is_in_list #}
             {% if post.is_series and not is_in_list %}
                 <h1>
-                    <small class="text-muted">Series contents.</small>
+                    <small class="text-muted">Series contents</small>
                 </h1>
                 <ul class="list-unstyled">
-                    <li class="lead"><strong><a href="{% post_date_url parent_post root_page %}" class="text-dark">{{ parent_post.title }}</a></strong></li>
+                    <li class="lead"><strong><a href="{% post_date_url parent_post root_page %}">{{ parent_post.title }}</a></strong></li>
                     <li>
                         <ul>
-                            {% for p in child_posts %}
-                                {% if p.pk == post.pk %}
-                                    <li><a href="{% post_date_url p root_page %}" class="text-dark"><strong>{{ p.title }}</strong></a></li>
-                                {% else %}
-                                    <li><a href="{% post_date_url p root_page %}" class="text-dark">{{ p.title }}</a></li>
-                                {% endif %}
-                            {% endfor %}
+                            {% if child_posts %}
+                                {% for p in child_posts %}
+                                    {% if p.pk == post.pk %}
+                                        <li><a href="{% post_date_url p root_page %}"><i>{{ p.title }}</i></a></li>
+                                    {% else %}
+                                        <li><a href="{% post_date_url p root_page %}">{{ p.title }}</a></li>
+                                    {% endif %}
+                                {% endfor %}
+                            {% else %}
+                                <li>No live posts in this series yet.</li>
+                            {% endif %}
                         </ul>
                     </li>
                 </ul>
