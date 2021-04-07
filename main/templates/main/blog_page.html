@@ -16,10 +16,7 @@
     <div class="test-justify post-body">
         {% for block in page.body %}
 
-            {% if block.block_type == 'image' %}
-                {% render_figure block %}
-
-            {% elif block.block_type == 'embed' %}
+            {% if block.block_type == 'embed' %}
                 <div class="embed-responsive embed-responsive-16by9 mb-3">
                     {% embed block.value.url %}
                 </div>
@@ -33,8 +30,6 @@
                 {# document does not have cut_flag, so that the links are correctly build whn posts listed #}
                 
                 <a href="{{ block.value.url }}" class="doc-link">{{ block.value.title }}</a>
-
-                {# {% include_block block %} #}
 
             {% else %}
                 {% include_block block %}

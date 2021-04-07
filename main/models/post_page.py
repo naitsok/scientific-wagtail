@@ -57,7 +57,7 @@ class PostPage(Page, HitCountMixin):
         ),
         ('paragraph', blocks.RichTextBlock()),
         ('quote', CustomBlockquoteBlock(classname='full')),
-        ('image', CaptionedImageBlock()),
+        ('figure', CaptionedImageBlock(label='Figure')),
         ('embed', EmbedBlock()),
         ('document', DocumentChooserBlock(help_text='All the text in other blocks, which is the same as document title will be replaced with the link to the document.')),
         ('markdown', MarkdownxBlock()),
@@ -65,6 +65,7 @@ class PostPage(Page, HitCountMixin):
         ('pages', blocks.PageChooserBlock()),
         ('columns', TwoColumnBlock()),
         ('table', CaptionedTableBlock()),
+        ('table_figure', CaptionedImageBlock(label='Table as Figure', icon='table')),
         ])
     pin_on_home = models.BooleanField(
         default=False,
@@ -83,12 +84,17 @@ class PostPage(Page, HitCountMixin):
     )
     generate_figure_numbers = models.BooleanField(
         default=False,
-        help_text=_('Indcates if the Figure number (such as Figure 1) should be generated for standalone images in the StreamField.'),
+        help_text=_('Indcates if figure numbers (such as Figure 1) should be generated for Figure block when rendring post.'),
         verbose_name=_('Generate figure numbers')
-        )
+    )
+    generate_table_numbers = models.BooleanField(
+        default = False,
+        help_text=_('Indicates if  table numbers (such as Table 1) should be geberated for Table block when rendering post.'),
+        verbose_name=_('Generate table numbers')
+    )
     generate_equation_numbers = models.BooleanField(
         default=False,
-        help_text=_('Indicated if equation number should be added on the right side of the standalone equation blog in the StreamField.'),
+        help_text=_('Indicates if equation numbers (such as (1)) should be added on the right side of the Equation block when rendering post.'),
         verbose_name=_('Generate equation numbers')
     )
     categories = ParentalManyToManyField(
@@ -135,7 +141,8 @@ class PostPage(Page, HitCountMixin):
                 FieldPanel('show_sidebar'),
                 FieldPanel('show_comments'),
                 FieldPanel('generate_figure_numbers'),
-                FieldPanel('generate_equation_numbers'),
+                FieldPanel('generate_table_numbers'),
+                FieldPanel('generate_equation_numbers')
             ],
             heading=_('Post settings')
         ),
@@ -150,7 +157,7 @@ class PostPage(Page, HitCountMixin):
     ]
 
     # Parent page / subpage type rules
-    # PostPage cna have children PostPages. In this case the parent page is
+    # PostPage can have children PostPages. In this case the parent page is
     # considered as 'series' type post and the links to the children pages are
     # generated, when page is accessed. Also the links to parent page and siblings
     # are rendered on the child page.
@@ -158,10 +165,59 @@ class PostPage(Page, HitCountMixin):
     parent_page_types = ['main.HomePage', 'main.PostPage']
     subpage_types = ['main.PostPage']
 
+
     # Methods
 
+    def update_body(self):
+        """Updates captions of figures, tables and equations if PostPage settings require so.
+        Collects figures and tables into a separate list to ease the rendering of Graphics
+        sidebar on the PostPage. Collects equations into another separate list to ease the 
+        rendering of Equations sidebar on the PostPage."""
+        fig_idx = 1
+        tbl_idx = 1
+        eq_idx = 1
+        graphics = list()
+        equations = list()
+        for block in self.body:
+            if block.block_type == 'figure':
+                if self.generate_figure_numbers:
+                    block.value['caption'] = _('<b>Figure ') + str(fig_idx) + '.</b> ' + block.value['caption']
+                    fig_idx += 1
+                graphics.append(block)
+            if block.block_type == 'table' or block.block_type == 'table_figure':
+                if self.generate_table_numbers:
+                    block.value['caption'] = _('<b>Table ') + str(tbl_idx) + '.</b> ' + block.value['caption']
+                    tbl_idx += 1
+                graphics.append(block)
+            if block.block_type == 'equation':
+                if self.generate_equation_numbers:
+                    block.value['caption'] = _('<b>Equation ') + str(eq_idx) + '.</b> ' + block.value['caption']
+                    eq_idx += 1
+                equations.append(block)
+            if block.block_type == 'columns':
+                for column in [block.value['left'], block.value['right']]:
+                    for col_block in column:
+                        if col_block.block_type == 'figure':
+                            if self.generate_figure_numbers:
+                                col_block.value['caption'] = _('<b>Figure ') + str(fig_idx) + '.</b> ' + col_block.value['caption']
+                                fig_idx += 1
+                            graphics.append(col_block)
+                        if col_block.block_type == 'table' or col_block.block_type == 'table_figure':
+                            if self.generate_table_numbers:
+                                col_block.value['caption'] = _('<b>Table ') + str(tbl_idx) + '.</b> ' + col_block.value['caption']
+                                tbl_idx += 1
+                            graphics.append(col_block)
+                        if col_block.block_type == 'equation':
+                            if self.generate_equation_numbers:
+                                col_block.value['caption'] = _('<b>Equation ') + str(eq_idx) + '.</b> ' + col_block.value['caption']
+                                eq_idx += 1
+                            equations.append(col_block)
+        return graphics, equations
+
+    
+
     def is_series(self):
-        # verifies post is series
+        """Verifies that post is series"""
         # parent_page = self.get_parent().specific
         if self.get_parent().specific_class == PostPage:
             # this is the child post of series
@@ -174,10 +230,11 @@ class PostPage(Page, HitCountMixin):
 
     def get_context(self, request, *args, **kwargs):
 
+        graphics, equations = self.update_body()
         context =  super().get_context(request, *args, **kwargs)
         context['post'] = self
-        context['tags'] = self.tags.all()
-        context['categories'] = self.blog_categories.all()
+        context['graphics'] = graphics
+        context['equations'] = equations
         context['previous_post'] = PostPage.objects.live().filter(
             first_published_at__lt=self.first_published_at
         ).order_by('-first_published_at').first()

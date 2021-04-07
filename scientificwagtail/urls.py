@@ -1,5 +1,5 @@
 from django.conf import settings
-from django.conf.urls import include, re_path
+from django.urls import include, re_path, path
 from django.contrib import admin
 
 from wagtail.admin import urls as wagtailadmin_urls
@@ -10,26 +10,26 @@ from wagtail.documents import urls as wagtaildocs_urls
 from search import views as search_views
 
 
-DJANGO_ADMIN_BASE_URL =  getattr(settings, 'DJANGO_ADMIN_BASE_URL', r'^django-admin/')
-WAGTAIL_ADMIN_BASE_URL =  getattr(settings, 'WAGTAIL_ADMIN_BASE_URL', r'^admin/')
-WAGTAIL_DOCUMENTS_BASE_URL =  getattr(settings, 'WAGTAIL_DOCUMENTS_BASE_URL', r'^documents/')
-MARKDOWNX_BASE_URL =  getattr(settings, 'MARKDOWNX_BASE_URL', r'^markdownx/')
-CAPTCHA_BASE_URL = getattr(settings, 'CAPTCHA_BASE_URL', r'^captcha/')
+DJANGO_ADMIN_BASE_URL =  getattr(settings, 'DJANGO_ADMIN_BASE_URL', 'django-admin/')
+WAGTAIL_ADMIN_BASE_URL =  getattr(settings, 'WAGTAIL_ADMIN_BASE_URL', 'admin/')
+WAGTAIL_DOCUMENTS_BASE_URL =  getattr(settings, 'WAGTAIL_DOCUMENTS_BASE_URL', 'documents/')
+MARKDOWNX_BASE_URL =  getattr(settings, 'MARKDOWNX_BASE_URL', 'markdownx/')
+CAPTCHA_BASE_URL = getattr(settings, 'CAPTCHA_BASE_URL', 'captcha/')
 
 
 urlpatterns = [
-    re_path(DJANGO_ADMIN_BASE_URL, admin.site.urls),
-    re_path(WAGTAIL_ADMIN_BASE_URL, include(wagtailadmin_urls)),
-    re_path(WAGTAIL_DOCUMENTS_BASE_URL, include(wagtaildocs_urls)),
+    path(DJANGO_ADMIN_BASE_URL, admin.site.urls),
+    path(WAGTAIL_ADMIN_BASE_URL, include(wagtailadmin_urls)),
+    path(WAGTAIL_DOCUMENTS_BASE_URL, include(wagtaildocs_urls)),
 
     # url(r'^search/$', search_views.search, name='search'),
     # according to django-markdownx docs
-    re_path(MARKDOWNX_BASE_URL, include('markdownx.urls')),
+    path(MARKDOWNX_BASE_URL, include('markdownx.urls')),
 
     # according to django-simple-captcha docs
-    re_path(CAPTCHA_BASE_URL, include('captcha.urls')),
+    path(CAPTCHA_BASE_URL, include('captcha.urls')),
 
-    re_path('^sitemap\.xml$', sitemap),
+    path('sitemap.xml', sitemap),
 
     # For anything not caught by a more specific rule above, hand over to
     # Wagtail's page serving mechanism. This should be the last pattern in

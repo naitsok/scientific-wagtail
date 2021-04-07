@@ -52,6 +52,9 @@ function generateContents() {
             $(header).attr('id', 'section-' + idx);
             var padding = 0;
             var fontSize = 1.5;
+            if($(header).prop('tagName') == "H1"){
+                padding = 0; fontSize = 1.5;
+            }
             if($(header).prop('tagName') == 'H2') {
                 padding = 1; fontSize = 1.4;
             }
@@ -73,8 +76,9 @@ function generateContents() {
                 .css({'padding-left': padding + 'em', 'font-size': fontSize + 'em'})
                 .text($(header).text())
 
-            $('#nav-contents').append(link);
-            
+            if($('#nav-contents').length){
+                $('#nav-contents').append(link);
+            }   
         });
     }
 }

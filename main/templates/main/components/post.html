@@ -26,11 +26,10 @@
 
 <article id="{{ post.slug }}" class="post">
 
-    {# context variable 'figure_idx' is needed to count images also in nested loops. Simple with variable is not working in nested loops #}
-    {# eq_idx variables is needed to generate figure and equation numbers #}
+    {# context variable 'equation_idx' is needed to count equations also in nested loops. Simple with variable is not working in nested loops #}
     {# cut_flag indicates if the rendering of post is not proceeding after the first 'cut' block has been met. #}
-    {% set_context_var 'figure_idx' 1 %}
-    {% with fig_idx=0 eq_idx=1 cut_flag=False column_list=0 %}
+    {% set_context_var 'equation_idx' 1 %}
+    {% with eq_idx=0 cut_flag=False column_list=0 %}
 
         <div class="test-justify post-body">
             {# first render contents if in series and not is_in_list #}
@@ -60,7 +59,7 @@
 
             {% for block in post.body %}
                 {% if block.block_type == 'cut' and is_in_list %}
-                    <a class="btn btn-info" href="{% post_date_url post root_page %}">
+                    <a class="btn btn-outline-primary" href="{% post_date_url post root_page %}">
                         {{ block.value }}
                         <i class="fas fa-long-arrow-alt-right"></i>
                     </a>
@@ -69,7 +68,7 @@
                 {% endif %}
 
                 {% if block.block_type == 'document' %}
-                    {# document block are not displayed. Instead, All the text, with is the same #}
+                    {# document block are not displayed. Instead, All the text, which is the same #}
                     {# as document title gets replaced with the document link. #}
                     {# document is added to page without regard to cut_flag, so that the links are correctly build when posts are listed #}
                     
@@ -81,12 +80,7 @@
 
                 {% if not cut_flag %}
 
-                    {% if block.block_type == 'image' %}
-                        {% get_context_var 'figure_idx' as fig_idx %}
-                        {% render_figure block fig_idx post.generate_figure_numbers %}
-                        {% increment_context_var 'figure_idx' %}
-
-                    {% elif block.block_type == 'embed' %}
+                    {% if block.block_type == 'embed' %}
                         <div class="embed-responsive embed-responsive-16by9 mb-3">
                             {% embed block.value.url %}
                         </div>
@@ -96,6 +90,7 @@
 
                     {% elif block.block_type == 'equation' %}
                         {% if post.generate_equation_numbers %}
+                            {% get_context_var 'equation_idx' as eq_idx %}
                             <dl class="row">
                                 <dt class="col-md-11 ">
                                     {{ block.value.equation }}
@@ -104,7 +99,7 @@
                                     ({{ eq_idx }})
                                 </dd>
                             </dl>
-                            {% increment_idx eq_idx as eq_idx %}
+                            {% increment_context_var 'equation_idx' %}
                         {% else %}
                             {# no caption of equation is included; caption is included only in the sidebar and dialog popup. #}
                             {{ block.value.equation }}
@@ -118,13 +113,25 @@
                                     {# loop through column blocks #}
                                     {# need another with variable, because the update in this inner loop does not work #}
                                     {% for col_block in column %}
-                                        {% if col_block.block_type == 'image' %}
-                                            {% get_context_var 'figure_idx' as fig_idx %}
-                                            {% render_figure col_block fig_idx post.generate_figure_numbers %}
-                                            {% increment_context_var 'figure_idx' %}
-
-                                        {% elif col_block.block_type == 'markdown' %}
+                                        {% if col_block.block_type == 'markdown' %}
                                             {{ col_block.value|markdown|safe }}
+
+                                        {% elif col_block.block_type == 'equation' %}
+                                            {% if post.generate_equation_numbers %}
+                                                {% get_context_var 'equation_idx' as eq_idx %}
+                                                <dl class="row">
+                                                    <dt class="col-md-11 ">
+                                                        {{ col_block.value.equation }}
+                                                    </dt>
+                                                    <dd class="col-md-1 align-self-center">
+                                                        ({{ eq_idx }})
+                                                    </dd>
+                                                </dl>
+                                                {% increment_context_var 'equation_idx' %}
+                                            {% else %}
+                                                {# no caption of equation is included; caption is included only in the sidebar and dialog popup. #}
+                                                {{ col_block.value.equation }}
+                                            {% endif %}
                                         
                                         {% else %}
                                             {% include_block col_block %}

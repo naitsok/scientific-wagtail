@@ -1,6 +1,8 @@
+{% load sciwagblocks_tags %}
+
 <p>
     {{ self.equation }}
 </p>
 <p>
-    {{ self.caption }}
+    {{ self.caption|markdown|safe }}
 </p>

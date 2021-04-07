@@ -217,5 +217,5 @@ class CaptionedTableBlock(blocks.StructBlock):
     class Meta:
         template = 'table_block/blocks/captioned_table.html'
         icon = 'table'
-        label = 'table'
+        label = 'Table'
     

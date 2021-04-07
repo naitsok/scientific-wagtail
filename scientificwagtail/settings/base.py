@@ -73,7 +73,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.middleware.security.SecurityMiddleware',
 
-    'wagtail.core.middleware.SiteMiddleware',
+    # 'wagtail.core.middleware.SiteMiddleware',
     'wagtail.contrib.redirects.middleware.RedirectMiddleware',
 
     'main.middleware.DjangoAdminAccessMiddleware',
@@ -188,23 +188,17 @@ AUTHENTICATION_BACKENDS = (
    'users.backends.EmailLoginBackend',
 )
 
-
-# Wagtail settings
-
-WAGTAILADMIN_USER_LOGIN_FORM = 'users.forms.EmailLoginForm'
-
-WAGTAIL_PASSWORD_RESET_ENABLED = True
-
-WAGTAIL_SITE_NAME = 'Scientific Wagtail'
-
 # Base URL to use when referring to full URLs within the Wagtail admin backend -
 # e.g. in notification emails. Don't include '/admin' or a trailing slash
 BASE_URL = 'http://example.com'
 
 
-# taggit settings
+# tags settings
 
 TAGGIT_CASE_INSENSITIVE = True
+
+# multiword tags
+TAG_SPACES_ALLOWED = True
 
 
 # El-pagination settings
@@ -216,6 +210,27 @@ EL_PAGINATION_PER_PAGE = 5
 EL_PAGINATION_PREVIOUS_LABEL = '<i class="fas fa-arrow-left"></i> Previous'
 
 EL_PAGINATION_NEXT_LABEL = 'Next <i class="fas fa-arrow-right"></i>'
+
+
+# Wagtail menus settings
+
+WAGTAILMENUS_ACTIVE_ANCESTOR_CLASS = 'active'
+
+
+# django-simple-captcha settings
+
+CAPTCHA_CHALLENGE_FUNCT = 'captcha.helpers.math_challenge'
+
+CAPTCHA_IMAGE_SIZE = (120, 60)
+
+CAPTCHA_FONT_SIZE = 30
+
+
+# hitcount settings
+# after this time the hit from the same user will be counted again
+HITCOUNT_KEEP_HIT_ACTIVE  = {'days' : 30 }
+# time to keep hits in database - now the hits are stored indefinitely
+# HITCOUNT_KEEP_HIT_IN_DATABASE = {'days': 30}
 
 
 # MarkdownX settings
@@ -238,27 +253,6 @@ MARKDOWNX_MARKDOWN_EXTENSION_CONFIGS = {
 }
 
 MARKDOWNX_MARKDOWNIFY_FUNCTION = 'sciwagblocks.utils.markdownify'
-
-
-# Wagtail menus settings
-
-WAGTAILMENUS_ACTIVE_ANCESTOR_CLASS = 'active'
-
-
-# django-simple-captcha settings
-
-CAPTCHA_CHALLENGE_FUNCT = 'captcha.helpers.math_challenge'
-
-CAPTCHA_IMAGE_SIZE = (120, 60)
-
-CAPTCHA_FONT_SIZE = 30
-
-
-# hitcount settings
-# after this time the hit from the same user will be counted again
-HITCOUNT_KEEP_HIT_ACTIVE  = {'days' : 30 }
-# time to keep hits in database - now the hits are stored indefinitely
-# HITCOUNT_KEEP_HIT_IN_DATABASE = {'days': 30}
 
 
 # Project settings
@@ -330,18 +324,77 @@ MARKDOWNX_STRIP = True
 MARKDOWNX_BLEACH = True
 
 
+# Wagtail settings
+
+WAGTAIL_APPEND_SLASH = True
+
+WAGTAIL_SITE_NAME = 'Scientific Wagtail'
+
+# Search backed for development
+WAGTAILSEARCH_BACKENDS = {
+    'default': {
+        'BACKEND': 'wagtail.search.backends.db',
+    }
+}
+
+# Disable password reset since it is personal site and the user is created using command line
+WAGTAIL_PASSWORD_RESET_ENABLED = False
+
+# Passwords can be changed
+WAGTAIL_PASSWORD_MANAGEMENT_ENABLED = True
+
+# Users do have passwords to log in
+WAGTAILUSERS_PASSWORD_ENABLED = True
+
+# Users must have paswords
+WAGTAILUSERS_PASSWORD_REQUIRED = True
+
+# See also embeds configuration at https://docs.wagtail.io/en/v2.11.3/advanced_topics/embeds.html#configuring-embed-finders
+WAGTAILEMBEDS_RESPONSIVE_HTML = True
+
+# Custom admin login form based on email
+WAGTAILADMIN_USER_LOGIN_FORM = 'users.forms.EmailLoginForm'
+
+# Changes whether the Submit for Moderation button is displayed in the action menu
+WAGTAIL_MODERATION_ENABLED = True
+
+# To count usage of images and documents
+WAGTAIL_USAGE_COUNT_ENABLED = True
+
+# Date and time formats for admin
+WAGTAIL_DATE_FORMAT = '%d.%m.%Y.'
+WAGTAIL_DATETIME_FORMAT = '%d.%m.%Y. %H:%M'
+WAGTAIL_TIME_FORMAT = '%H:%M'
+
+# Static files to prevent chaching and outdate
+WAGTAILADMIN_STATIC_FILE_VERSION_STRINGS = True
+
+# Text editor
+WAGTAILADMIN_RICH_TEXT_EDITORS = {
+    'default': {
+        'WIDGET': 'wagtail.admin.rich_text.DraftailRichTextArea',
+        'OPTIONS': {
+            'features': ['h1', 'h2', 'h3', 'h4', 'h5', 'h6',
+             'bold', 'italic', 'ol', 'ul', 'hr',
+             'link', 'document-link', 'image', 'embed',
+             'code', 'superscript', 'subscript', 'strikethrough']
+        }
+    }
+}
+
+
 # main app settings
 
 # base urls for urls.py
-WAGTAIL_ADMIN_BASE_URL = r'^admin/'
+WAGTAIL_ADMIN_BASE_URL = 'admin/'
 
-WAGTAIL_DOCUMENTS_BASE_URL = r'^documents/'
+WAGTAIL_DOCUMENTS_BASE_URL = 'documents/'
 
-DJANGO_ADMIN_BASE_URL = r'^django-admin/'
+DJANGO_ADMIN_BASE_URL = 'django-admin/'
 
-MARKDOWNX_BASE_URL = r'^markdownx/'
+MARKDOWNX_BASE_URL = 'markdownx/'
 
-CAPTCHA_BASE_URL = r'^captcha/'
+CAPTCHA_BASE_URL = 'captcha/'
 
 
 # Tag cloud settings
@@ -365,3 +418,4 @@ DISPLAY_ARCHIVE_LENGTH = 5
 
 # Disqus settings
 DISQUS_URL = 'https://example.disqus.com/embed.js'
+

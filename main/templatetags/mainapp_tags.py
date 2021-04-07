@@ -112,7 +112,7 @@ def post_date_url(post, root_page):
 
 
 @register.inclusion_tag('main/components/post.html', takes_context=True)
-def render_post(context, post, categories, tags, is_in_list):
+def render_post(context, post, is_in_list):
     """Renders one post with categoties, tags and urls. root_page is 
     needed to correctly generate the urls. It is not specified here
     since it is available from context processor. The context must be flattened
@@ -120,29 +120,13 @@ def render_post(context, post, categories, tags, is_in_list):
     https://github.com/wagtail/wagtail/issues/3045.
     is_in_list indicates id the title should be a link to the post page.
     Needed when post rendered from list of posts."""
+
     flat_context = context.flatten()
     flat_context['post'] = post
-    flat_context['categories'] = categories
-    flat_context['tags'] = tags
+    flat_context['categories'] = post.blog_categories.all()
+    flat_context['tags'] = post.tags.all()
     flat_context['is_in_list'] = is_in_list
     return flat_context
-
-
-@register.inclusion_tag('main/components/figure.html', takes_context=True)
-def render_figure(context, block, fig_idx=0, render_figure_number=False, truncate_caption=False):
-    """Helper tag to render figure block."""
-    caption = ''
-    if render_figure_number:
-        caption = _('Figure ') + str(fig_idx) + '. ' + block.value['caption']
-    else:
-        caption = block.value['caption']
-
-    context.update({
-        'figure': block.value['image'],
-        'caption': caption,
-        'truncate_caption': truncate_caption,
-    })
-    return context
 
 
 @register.inclusion_tag('main/components/comments/disqus.html', takes_context=True)

@@ -12,3 +12,4 @@ class CaptionedImageBlock(blocks.StructBlock):
     class Meta:
         template = 'image_block/captioned_image.html'
         icon = 'image'
+        label = 'Figure'

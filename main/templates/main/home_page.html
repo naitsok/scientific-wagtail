@@ -21,7 +21,7 @@
         </h3>
 
         {% for post in pinned_posts %}
-            {% render_post post post.blog_categories.all post.tags.all True %}
+            {% render_post post True %}
             <br />
         {% endfor %}
 
@@ -45,7 +45,7 @@
 
     {% paginate posts_per_page posts %}
     {% for post in posts %}
-        {% render_post post post.blog_categories.all post.tags.all True %}
+        {% render_post post True %}
         <br />
     {% endfor %}
 

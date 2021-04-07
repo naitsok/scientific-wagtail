@@ -1,5 +1,7 @@
 from django.conf import settings
 
+from wagtail.core.models import Site
+
 from .models import PostPage
 
 
@@ -19,7 +21,7 @@ def archive(request):
 def root_page(request):
     """Returns the root page instance. Needed for url generations."""
     return { 
-        'root_page': request.site.root_page.specific,
+        'root_page': Site.find_for_request(request).root_page.specific,
     }
 
 
